@@ -33,6 +33,8 @@ int main (int argc, char* argv[]) {
 
   Particle par[part_no];
   init_particles(seed,grid_sz,part_no,par);
+  Grid grid[grid_sz][grid_sz];
+  init_grid(grid_sz, grid);
   /*
   for(i=0; i<part_no; i++){
     par[i].setAll(0.23, 0.45, 0.67, 0.78, 23);

@@ -8,16 +8,17 @@ class Grid {
     double getX();
     void setY(double x_new);
     double getY();
-    void setVX(double x_new);
-    double getVX();
-    void setVY(double x_new);
-    double getVY();
-    void setM(double x_new);
+    void calculateM(double x_new);
     double getM();
+
+    //definir o remover e adicionar de uma lista
   private:
     double x;
     double y;
     double vx;
     double vy;
-    double m;
+    double M;
+    Particle *par;
 };
+
+void init_grid(int grid_sz,Grid **grid);

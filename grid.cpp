@@ -5,42 +5,27 @@ Grid::Grid() {
    std::cout << "Grid created" << std::endl;
 }
 
-void Particle::setX (double x_new) {
+void Grid::setX (double x_new) {
     x = x_new;
 }
 
-double Particle::getX () {
+double Grid::getX () {
     return x;
 }
 
-void Particle::setY (double y_new) {
+void Grid::setY (double y_new) {
     y = y_new;
 }
 
-double Particle::getY () {
+double Grid::getY () {
     return y;
 }
 
-void Particle::setVX (double vx_new) {
-    vx = vx_new;
+//Aqui vai-se calcular o centro de massa (x, y) de uma celula com a expressao 1/M* E(mi * (x,y))
+void Grid::calculateM (double m_new) {
+    M = m_new;
 }
 
-double Particle::getVX () {
-    return vx;
-}
-
-void Particle::setVY (double vy_new) {
-    vy = vy_new;
-}
-
-double Particle::getVY () {
-    return vy;
-}
-
-void Particle::setM (double m_new) {
-    m = m_new;
-}
-
-double Particle::getM () {
-    return m;
+double Grid::getM () {
+    return M;
 }
