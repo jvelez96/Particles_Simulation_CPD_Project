@@ -32,3 +32,5 @@ class Particle {
     double vy;
     double m;
 };
+
+void init_particles(long seed, long ncside, long long n_part, Particle *par);

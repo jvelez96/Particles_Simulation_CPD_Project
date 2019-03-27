@@ -1,16 +1,40 @@
 // main.cpp
-#include "particle.h"
+#include "grid.h"
 
-int main () {
+int main (int argc, char* argv[]) {
   int i;
   int a;
+  int seed, grid_sz, part_no, steps;
 
-  std::cout << "Input: " << std::endl;
-  std::cin >> a;
+  if (argc!=5){
+    std::cout << "Incorrect number of arguments." << std::endl;
+    exit(1);
+  }
+  std::istringstream iss( argv[1] );
+  if (iss >> seed)
+  {
+      std::cout << "Seed nº:" << seed << std::endl;
+  }
+  std::istringstream iss1( argv[2] );
+  if (iss1 >> grid_sz)
+  {
+      std::cout << "Grid size:" << grid_sz << std::endl;
+  }
+  std::istringstream iss2( argv[3] );
+  if (iss2 >> part_no)
+  {
+      std::cout << "Nº of particles:"<< part_no << std::endl;
+  }
+  std::istringstream iss3( argv[4] );
+  if (iss3 >> steps)
+  {
+      std::cout << "Nº of steps:" << steps << std::endl;
+  }
 
-  Particle par[a];
-
-  for(i=0; i<a; i++){
+  Particle par[part_no];
+  init_particles(seed,grid_sz,part_no,par);
+  /*
+  for(i=0; i<part_no; i++){
     par[i].setAll(0.23, 0.45, 0.67, 0.78, 23);
     std::cout << "X: " << par[i].getX() << std::endl;
     std::cout << "Y: " << par[i].getY() << std::endl;
@@ -20,7 +44,7 @@ int main () {
     std::cout << "\n";
   }
 
-
+*/
 
   return 0;
 }
