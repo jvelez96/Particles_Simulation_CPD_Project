@@ -33,7 +33,8 @@ int main (int argc, char* argv[]) {
 
   Particle par[part_no];
   init_particles(seed,grid_sz,part_no,par);
-  Grid grid[grid_sz][grid_sz];
+  Grid grid [grid_sz][grid_sz];
+  //isto esta a dar erro a passar este grid, still couldnt find out why
   init_grid(grid_sz, grid);
   /*
   for(i=0; i<part_no; i++){
