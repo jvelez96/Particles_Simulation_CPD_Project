@@ -1,5 +1,5 @@
 // main.cpp
-#include "grid.h"
+#include "particle.h"
 
 int main (int argc, char* argv[]) {
   int i;
@@ -30,15 +30,16 @@ int main (int argc, char* argv[]) {
   {
       std::cout << "Nº of steps:" << steps << std::endl;
   }
-
-  Particle par[part_no];
-  init_particles(seed,grid_sz,part_no,par);
   Grid **grid = new Grid*[grid_sz];
   for(i=0;i<grid_sz;i++){
     grid[i] = new Grid[grid_sz];
   }
-  //isto esta a dar erro a passar este grid, still couldnt find out why
+  Particle par[part_no];
   init_grid(grid_sz, grid);
+  init_particles(seed,grid_sz,part_no,par, grid);
+
+  //isto esta a dar erro a passar este grid, still couldnt find out why
+
   /*
   for(i=0; i<part_no; i++){
     par[i].setAll(0.23, 0.45, 0.67, 0.78, 23);

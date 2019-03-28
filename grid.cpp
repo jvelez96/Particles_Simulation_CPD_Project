@@ -21,6 +21,11 @@ double Grid::getY () {
     return y;
 }
 
+void Grid::insert_list(int new_par){
+  par_list.push_front(new_par);
+}
+
+
 
 //Aqui vai-se calcular o centro de massa (x, y) de uma celula com a expressao 1/M* E(mi * (x,y))
 

@@ -1,15 +1,6 @@
 // particle.h
-#include<cstdlib>
-#include<iostream>
-#include<fstream>
-#include<string>
-#include<sstream>
-#include<iomanip>
-#include<cstdio>
-#include<cmath>
-#include<ctime>
-#include<list>
-#include<iterator>
+#include "grid.h"
+
 
 class Particle {
   public:
@@ -35,4 +26,4 @@ class Particle {
     double m;
 };
 
-void init_particles(long seed, long ncside, long long n_part, Particle *par);
+void init_particles(long seed, long ncside, long long n_part, Particle *par, Grid **grid);

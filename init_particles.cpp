@@ -1,7 +1,15 @@
 #define RND0_1 ((double) random() / ((long long)1<<31))
 #define G 6.67408e-11
 #define EPSLON 0.01
-#include "grid.h"
+#include "particle.h"
+
+void showlist(std::list <int> g)
+{
+    std::list <int> :: iterator it;
+    for(it = g.begin(); it != g.end(); ++it)
+        std::cout << '\t' << *it;
+    std::cout << '\n';
+}
 
 void init_grid(int size, Grid **grid){
   long long i, j;
@@ -11,6 +19,7 @@ void init_grid(int size, Grid **grid){
       grid[i][j].setY(j);
       std::cout << "X: " << grid[i][j].getX() << std::endl;
       std::cout << "Y: " << grid[i][j].getY() << std::endl;
+
     }
   }
 }
@@ -18,8 +27,8 @@ void init_grid(int size, Grid **grid){
 //no init particles, arredondar o x e o y, e mete-lo logo na lista da celula certa e ir dando um +=  a uma variavel para termos
 //a soma de todas as massas no inicio sem complexidade extra de percorrer todas as listas de novo
 
-void init_particles(long seed, long ncside, long long n_part, Particle *par, /*Grid **grid */){
-  long long i;
+void init_particles(long seed, long ncside, long long n_part, Particle *par, Grid **grid){
+  long long i, x, y;
 
   srandom(seed);
 
@@ -36,6 +45,11 @@ void init_particles(long seed, long ncside, long long n_part, Particle *par, /*G
     std::cout << "VY: " << par[i].getVY() << std::endl;
     std::cout << "M: " << par[i].getM() << std::endl;
     std::cout << "\n";
+    x = floor(par[i].getX() * ncside);
+    y = floor(par[i].getY() * ncside);
+    grid[x][y].insert_list(i);
+    showlist(grid[x][y].par_list);
+    printf("x:%lld y:%lld\n",x,y);
   }
 }
 
