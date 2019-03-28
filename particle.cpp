@@ -5,6 +5,7 @@ Particle::Particle() {
    std::cout << "Particle created" << std::endl;
 }
 
+
 void Particle::setAll(double x_new, double y_new, double vx_new, double vy_new, double m_new) {
     x = x_new;
     y = y_new;

@@ -8,7 +8,7 @@ class Grid {
     double getX();
     void setY(double x_new);
     double getY();
-    void calculateM(double x_new);
+    void setM(double x_new);
     double getM();
 
     //definir o remover e adicionar de uma lista

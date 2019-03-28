@@ -25,12 +25,16 @@ void init_particles(long seed, long ncside, long long n_part, Particle *par){
   }
 }
 
+
+
 void init_grid(int size, Grid **grid){
   long long i, j;
   for(i=0; i< size;i++){
     for(j=0;j<size;j++){
       grid[i][j].setX(i);
       grid[i][j].setY(j);
+      std::cout << "X: " << grid[i][j].getX() << std::endl;
+      std::cout << "Y: " << grid[i][j].getY() << std::endl;
     }
   }
 }
