@@ -1,5 +1,5 @@
 // main.cpp
-#include "particle.h"
+#include "grid.h"
 
 int main (int argc, char* argv[]) {
   int i;
@@ -37,7 +37,14 @@ int main (int argc, char* argv[]) {
   Particle par[part_no];
   //init_grid(grid_sz, grid);
   init_particles(seed,grid_sz,part_no,par, grid);
-  update_center(grid_sz, grid, par);
+  /* ciclo baseado no numero de steps */
+  for(i=0; i<steps; i++){
+    //comecar pelo update_center
+    //calcular as forças
+    //calcular novas velocidades e posiçoes
+    //acabar em limpar a lista
+  }
+  update_center_all(grid_sz, grid, par);
 
   //isto esta a dar erro a passar este grid, still couldnt find out why
 

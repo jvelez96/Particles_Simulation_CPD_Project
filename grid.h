@@ -1,15 +1,5 @@
 // grid.h
-#include<cstdlib>
-#include<iostream>
-#include<fstream>
-#include<string>
-#include<sstream>
-#include<iomanip>
-#include<cstdio>
-#include<cmath>
-#include<ctime>
-#include<list>
-#include<iterator>
+#include "particle.h"
 
 class Grid {
   public:
@@ -25,6 +15,7 @@ class Grid {
     void insert_list(int new_par);
     std::list<int> par_list;
     void add_toM(double m_new);
+    void update_center(Particle *par);
 
   private:
     double x;
@@ -35,3 +26,5 @@ class Grid {
 
 void init_grid(int grid_sz,Grid **grid);
 void showlist(std::list <int> g);
+void init_particles(long seed, long ncside, long long n_part, Particle *par, Grid **grid);
+void update_center_all(int size,Grid **grid, Particle *par);

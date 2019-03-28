@@ -1,7 +1,7 @@
 #define RND0_1 ((double) random() / ((long long)1<<31))
 #define G 6.67408e-11
 #define EPSLON 0.01
-#include "particle.h"
+#include "grid.h"
 
 void showlist(std::list <int> g)
 {
@@ -26,12 +26,13 @@ void init_particles(long seed, long ncside, long long n_part, Particle *par, Gri
     par[i].setVX(RND0_1 / ncside / 10.0);
     par[i].setVY(RND0_1 / ncside / 10.0);
     par[i].setM( RND0_1 * ncside / (G * 1e6 * n_part)) ;
+    /*
     std::cout << "X: " << par[i].getX() << std::endl;
     std::cout << "Y: " << par[i].getY() << std::endl;
     std::cout << "VX: " << par[i].getVX() << std::endl;
     std::cout << "VY: " << par[i].getVY() << std::endl;
     std::cout << "M: " << par[i].getM() << std::endl;
-    std::cout << "\n";
+    std::cout << "\n";*/
     x = floor(par[i].getX() * ncside);
     y = floor(par[i].getY() * ncside);
     grid[x][y].insert_list(i);

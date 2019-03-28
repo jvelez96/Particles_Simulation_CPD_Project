@@ -1,5 +1,15 @@
 // particle.h
-#include "grid.h"
+#include<cstdlib>
+#include<iostream>
+#include<fstream>
+#include<string>
+#include<sstream>
+#include<iomanip>
+#include<cstdio>
+#include<cmath>
+#include<ctime>
+#include<list>
+#include<iterator>
 
 
 class Particle {
@@ -25,6 +35,3 @@ class Particle {
     double vy;
     double m;
 };
-
-void init_particles(long seed, long ncside, long long n_part, Particle *par, Grid **grid);
-void update_center (int size,Grid **grid, Particle *par);
