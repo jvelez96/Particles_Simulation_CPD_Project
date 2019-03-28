@@ -35,8 +35,9 @@ int main (int argc, char* argv[]) {
     grid[i] = new Grid[grid_sz];
   }
   Particle par[part_no];
-  init_grid(grid_sz, grid);
+  //init_grid(grid_sz, grid);
   init_particles(seed,grid_sz,part_no,par, grid);
+  update_center(grid_sz, grid, par);
 
   //isto esta a dar erro a passar este grid, still couldnt find out why
 

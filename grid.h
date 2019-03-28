@@ -16,12 +16,15 @@ class Grid {
     Grid();
     void setX(double x_new);
     double getX();
+    void add_toX(double y_new);
     void setY(double x_new);
     double getY();
-    void setM(double x_new);
+    void add_toY(double y_new);
+    void setM(double M_new);
     double getM();
     void insert_list(int new_par);
     std::list<int> par_list;
+    void add_toM(double m_new);
 
   private:
     double x;

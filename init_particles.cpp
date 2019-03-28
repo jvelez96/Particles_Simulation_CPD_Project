@@ -11,19 +11,6 @@ void showlist(std::list <int> g)
     std::cout << '\n';
 }
 
-void init_grid(int size, Grid **grid){
-  long long i, j;
-  for(i=0; i< size;i++){
-    for(j=0;j<size;j++){
-      grid[i][j].setX(i);
-      grid[i][j].setY(j);
-      std::cout << "X: " << grid[i][j].getX() << std::endl;
-      std::cout << "Y: " << grid[i][j].getY() << std::endl;
-
-    }
-  }
-}
-
 //no init particles, arredondar o x e o y, e mete-lo logo na lista da celula certa e ir dando um +=  a uma variavel para termos
 //a soma de todas as massas no inicio sem complexidade extra de percorrer todas as listas de novo
 
@@ -48,8 +35,24 @@ void init_particles(long seed, long ncside, long long n_part, Particle *par, Gri
     x = floor(par[i].getX() * ncside);
     y = floor(par[i].getY() * ncside);
     grid[x][y].insert_list(i);
+    grid[x][y].add_toM(par[i].getM());
     showlist(grid[x][y].par_list);
-    printf("x:%lld y:%lld\n",x,y);
+    printf("x:%lld y:%lld\ntotal M:%f\n",x,y, grid[x][y].getM());
+  }
+}
+
+//desnecessaria
+void init_grid(int size, Grid **grid){
+  long long i, j;
+  for(i=0; i< size;i++){
+    for(j=0;j<size;j++){
+      grid[i][j].setX(0);
+      grid[i][j].setY(0);
+      /*
+      std::cout << "X: " << grid[i][j].getX() << std::endl;
+      std::cout << "Y: " << grid[i][j].getY() << std::endl;
+      */
+    }
   }
 }
 

@@ -27,3 +27,4 @@ class Particle {
 };
 
 void init_particles(long seed, long ncside, long long n_part, Particle *par, Grid **grid);
+void update_center (int size,Grid **grid, Particle *par);
