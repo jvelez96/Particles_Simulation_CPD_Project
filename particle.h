@@ -8,6 +8,8 @@
 #include<cstdio>
 #include<cmath>
 #include<ctime>
+#include<list>
+#include<iterator>
 
 class Particle {
   public:

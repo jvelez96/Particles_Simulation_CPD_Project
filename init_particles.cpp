@@ -3,8 +3,22 @@
 #define EPSLON 0.01
 #include "grid.h"
 
+void init_grid(int size, Grid **grid){
+  long long i, j;
+  for(i=0; i< size;i++){
+    for(j=0;j<size;j++){
+      grid[i][j].setX(i);
+      grid[i][j].setY(j);
+      std::cout << "X: " << grid[i][j].getX() << std::endl;
+      std::cout << "Y: " << grid[i][j].getY() << std::endl;
+    }
+  }
+}
 
-void init_particles(long seed, long ncside, long long n_part, Particle *par){
+//no init particles, arredondar o x e o y, e mete-lo logo na lista da celula certa e ir dando um +=  a uma variavel para termos
+//a soma de todas as massas no inicio sem complexidade extra de percorrer todas as listas de novo
+
+void init_particles(long seed, long ncside, long long n_part, Particle *par, /*Grid **grid */){
   long long i;
 
   srandom(seed);
@@ -25,16 +39,4 @@ void init_particles(long seed, long ncside, long long n_part, Particle *par){
   }
 }
 
-
-
-void init_grid(int size, Grid **grid){
-  long long i, j;
-  for(i=0; i< size;i++){
-    for(j=0;j<size;j++){
-      grid[i][j].setX(i);
-      grid[i][j].setY(j);
-      std::cout << "X: " << grid[i][j].getX() << std::endl;
-      std::cout << "Y: " << grid[i][j].getY() << std::endl;
-    }
-  }
-}
+//fazer a funcao para atualizar o centro de massa  de todas as celulas
