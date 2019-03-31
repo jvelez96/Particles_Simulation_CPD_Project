@@ -1,5 +1,5 @@
 // main.cpp
-#include "grid.h"
+#include "physics.h"
 
 int main (int argc, char* argv[]) {
   int i;
@@ -31,37 +31,26 @@ int main (int argc, char* argv[]) {
       std::cout << "Nº of steps:" << steps << std::endl;
   }
 
-
+  //Start both structures
   Grid **grid = new Grid*[grid_sz];
   for(i=0;i<grid_sz;i++){
     grid[i] = new Grid[grid_sz];
   }
   Particle par[part_no];
-  //init_grid(grid_sz, grid);
+
+  init_grid(grid_sz, grid);
   init_particles(seed,grid_sz,part_no,par, grid);
+
   /* ciclo baseado no numero de steps */
   for(i=0; i<steps; i++){
-    //comecar pelo update_center
+    update_center_all(grid_sz, grid, par);
+
     //calcular as forças
     //calcular novas velocidades e posiçoes
-    //acabar em limpar a lista
-  }
-  update_center_all(grid_sz, grid, par);
-
-  //isto esta a dar erro a passar este grid, still couldnt find out why
-
-  /*
-  for(i=0; i<part_no; i++){
-    par[i].setAll(0.23, 0.45, 0.67, 0.78, 23);
-    std::cout << "X: " << par[i].getX() << std::endl;
-    std::cout << "Y: " << par[i].getY() << std::endl;
-    std::cout << "VX: " << par[i].getVX() << std::endl;
-    std::cout << "VY: " << par[i].getVY() << std::endl;
-    std::cout << "M: " << par[i].getM() << std::endl;
-    std::cout << "\n";
+    clear_grid(grid_sz, grid);
   }
 
-*/
+
 
   return 0;
 }

@@ -69,6 +69,26 @@ void Grid::update_center(Particle *par){
 
 // --------------------  General Functions ------------------------------
 
+void init_grid (int size, Grid **grid){
+  int i, j;
+  for(i=0;i<size;i++){
+    for(j=0;j<size;j++){
+      grid[i][j].setX(0);
+      grid[i][j].setY(0);
+      grid[i][j].setM(0);
+    }
+  }
+}
+
+void clear_grid (int size, Grid **grid){
+  int i, j;
+  for(i=0;i<size;i++){
+    for(j=0;j<size;j++){
+      grid[i][j].clear_particles();
+    }
+  }
+}
+
 /* Função para fazer o update geral de todos os centros de massa com base nas particulas que tem no momento */
 void update_center_all (int size, Grid **grid, Particle *par){
   int i, j;
@@ -78,16 +98,6 @@ void update_center_all (int size, Grid **grid, Particle *par){
       grid[i][j].update_center(par);
       std::cout << "Center of Mass\nX:" << grid[i][j].getX() << std::endl;
       std::cout << "Y: " << grid[i][j].getY() << std::endl;
-    }
-  }
-}
-
-void clear_grid (int size, Grid **grid){
-  int i, j;
-
-  for(i=0;i<size;i++){
-    for(j=0;j<size;j++){
-      grid[i][j].clear_particles();
     }
   }
 }

@@ -20,14 +20,12 @@ class Grid {
     void update_center(Particle *par);
 
   private:
-    long double x;
+    long double x; //Coordinates of center of mass
     long double y;
-    long double M;
+    long double M; //Total mass
 
 };
 
-void update_center_all(int size, Grid **grid, Particle *par);
+void init_grid(int size, Grid **grid);
 void clear_grid(int size, Grid **grid);
-
-void showlist(std::list <int> g);
-void init_particles(long seed, long ncside, long long n_part, Particle *par, Grid **grid);
+void update_center_all(int size, Grid **grid, Particle *par);
