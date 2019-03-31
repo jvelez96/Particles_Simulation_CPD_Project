@@ -15,23 +15,23 @@
 class Particle {
   public:
     Particle();
-    void setAll(double x_new, double y_new, double vx_new, double vy_new, double m_new);
+    void setAll(long double x_new, long double y_new, long double vx_new, long double vy_new, long double m_new);
 
-    void setX(double x_new);
-    double getX();
-    void setY(double x_new);
-    double getY();
-    void setVX(double x_new);
-    double getVX();
-    void setVY(double x_new);
-    double getVY();
-    void setM(double x_new);
-    double getM();
+    void setX(long double x_new);
+    long double getX();
+    void setY(long double x_new);
+    long double getY();
+    void setVX(long double x_new);
+    long double getVX();
+    void setVY(long double x_new);
+    long double getVY();
+    void setM(long double x_new);
+    long double getM();
 
   private:
-    double x;
-    double y;
-    double vx;
-    double vy;
-    double m;
+    long double x;
+    long double y;
+    long double vx;
+    long double vy;
+    long double m;
 };

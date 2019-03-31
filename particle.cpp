@@ -6,7 +6,7 @@ Particle::Particle() {
 }
 
 
-void Particle::setAll(double x_new, double y_new, double vx_new, double vy_new, double m_new) {
+void Particle::setAll(long double x_new, long double y_new, long double vx_new, long double vy_new, long double m_new) {
     x = x_new;
     y = y_new;
     vx = vx_new;
@@ -14,42 +14,42 @@ void Particle::setAll(double x_new, double y_new, double vx_new, double vy_new, 
     m = m_new;
 }
 
-void Particle::setX (double x_new) {
+void Particle::setX (long double x_new) {
     x = x_new;
 }
 
-double Particle::getX () {
+long double Particle::getX () {
     return x;
 }
 
-void Particle::setY (double y_new) {
+void Particle::setY (long double y_new) {
     y = y_new;
 }
 
-double Particle::getY () {
+long double Particle::getY () {
     return y;
 }
 
-void Particle::setVX (double vx_new) {
+void Particle::setVX (long double vx_new) {
     vx = vx_new;
 }
 
-double Particle::getVX () {
+long double Particle::getVX () {
     return vx;
 }
 
-void Particle::setVY (double vy_new) {
+void Particle::setVY (long double vy_new) {
     vy = vy_new;
 }
 
-double Particle::getVY () {
+long double Particle::getVY () {
     return vy;
 }
 
-void Particle::setM (double m_new) {
+void Particle::setM (long double m_new) {
     m = m_new;
 }
 
-double Particle::getM () {
+long double Particle::getM () {
     return m;
 }

@@ -10,26 +10,28 @@ int main (int argc, char* argv[]) {
     std::cout << "Incorrect number of arguments." << std::endl;
     exit(1);
   }
+
   std::istringstream iss( argv[1] );
-  if (iss >> seed)
-  {
+  if (iss >> seed){
       std::cout << "Seed nº:" << seed << std::endl;
   }
+
   std::istringstream iss1( argv[2] );
-  if (iss1 >> grid_sz)
-  {
+  if (iss1 >> grid_sz){
       std::cout << "Grid size:" << grid_sz << std::endl;
   }
+
   std::istringstream iss2( argv[3] );
-  if (iss2 >> part_no)
-  {
+  if (iss2 >> part_no){
       std::cout << "Nº of particles:"<< part_no << std::endl;
   }
+
   std::istringstream iss3( argv[4] );
-  if (iss3 >> steps)
-  {
+  if (iss3 >> steps){
       std::cout << "Nº of steps:" << steps << std::endl;
   }
+
+
   Grid **grid = new Grid*[grid_sz];
   for(i=0;i<grid_sz;i++){
     grid[i] = new Grid[grid_sz];

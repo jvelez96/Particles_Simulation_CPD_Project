@@ -26,8 +26,8 @@ void init_particles(long seed, long ncside, long long n_part, Particle *par, Gri
     par[i].setVX(RND0_1 / ncside / 10.0);
     par[i].setVY(RND0_1 / ncside / 10.0);
     par[i].setM( RND0_1 * ncside / (G * 1e6 * n_part)) ;
-    /*
-    std::cout << "X: " << par[i].getX() << std::endl;
+
+    /*std::cout << "X: " << par[i].getX() << std::endl;
     std::cout << "Y: " << par[i].getY() << std::endl;
     std::cout << "VX: " << par[i].getVX() << std::endl;
     std::cout << "VY: " << par[i].getVY() << std::endl;
@@ -41,20 +41,3 @@ void init_particles(long seed, long ncside, long long n_part, Particle *par, Gri
     printf("x:%lld y:%lld\ntotal M:%f\n",x,y, grid[x][y].getM());
   }
 }
-
-//desnecessaria
-void init_grid(int size, Grid **grid){
-  long long i, j;
-  for(i=0; i< size;i++){
-    for(j=0;j<size;j++){
-      grid[i][j].setX(0);
-      grid[i][j].setY(0);
-      /*
-      std::cout << "X: " << grid[i][j].getX() << std::endl;
-      std::cout << "Y: " << grid[i][j].getY() << std::endl;
-      */
-    }
-  }
-}
-
-//fazer a funcao para atualizar o centro de massa  de todas as celulas
