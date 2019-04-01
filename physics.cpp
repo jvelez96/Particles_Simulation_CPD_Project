@@ -55,8 +55,8 @@ Vector get_force(Particle par, Grid grid){
   cosA = (grid.getX() - par.getX())/d;
   senA = (grid.getY() - par.getY())/d;
   ft = G * (par.getM() * grid.getM())/(d*d);
-  f.x = cosA * f;
-  f.y = senA * f;
+  f.x = cosA * ft;
+  f.y = senA * ft;
 
   return f;
 }
@@ -110,8 +110,8 @@ void move_particle(long grid_sz, Particle par, Grid **grid, long long id){
   //Updates particle and grid with new info on this particle
   par.setPos(new_pos);
   par.setV(new_v);
-  Gx = floor(par.getX() * gride_sz);
-  Gy = floor(par.getY() * gride_sz);
+  Gx = floor(par.getX() * grid_sz);
+  Gy = floor(par.getY() * grid_sz);
   grid[Gx][Gy].insert_list(id);
   grid[Gx][Gy].add_toM(par.getM());
 
