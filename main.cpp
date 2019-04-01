@@ -2,7 +2,7 @@
 #include "physics.h"
 
 int main (int argc, char* argv[]) {
-  int i;
+  int i, j;
   int a;
   int seed, grid_sz, part_no, steps;
 
@@ -36,7 +36,7 @@ int main (int argc, char* argv[]) {
   for(i=0;i<grid_sz;i++){
     grid[i] = new Grid[grid_sz];
   }
-  Particle par[part_no];
+  Particle *par = new Particle[part_no];
 
   init_grid(grid_sz, grid);
   init_particles(seed,grid_sz,part_no,par, grid);
@@ -44,13 +44,14 @@ int main (int argc, char* argv[]) {
   /* ciclo baseado no numero de steps */
   for(i=0; i<steps; i++){
     update_center_all(grid_sz, grid, par);
-
-    //calcular as forças
-    //calcular novas velocidades e posiçoes
     clear_grid(grid_sz, grid);
+    for(j=0; j<part_no; j++){
+        move_particle(grid_sz, &par[j], grid, j);
+    }
+    swap_grid_Ms(grid_sz, grid);
   }
 
-
+  printf("%f %f", par[0].getX(), par[0].getY());
 
   return 0;
 }

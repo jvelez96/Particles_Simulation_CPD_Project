@@ -12,25 +12,25 @@
 #include<iterator>
 
 struct Vector {
-    long double x;
-    long double y;
+    double x;
+    double y;
 };
 
 class Particle {
   public:
     Particle();
-    void setAll(long double x_new, long double y_new, long double vx_new, long double vy_new, long double m_new);
+    void setAll(double x_new, double y_new, double vx_new, double vy_new, double m_new);
 
-    void setX(long double x_new);
-    long double getX();
-    void setY(long double y_new);
-    long double getY();
-    void setVX(long double vx_new);
-    long double getVX();
-    void setVY(long double vy_new);
-    long double getVY();
-    void setM(long double m_new);
-    long double getM();
+    void setX(double x_new);
+    double getX();
+    void setY(double y_new);
+    double getY();
+    void setVX(double vx_new);
+    double getVX();
+    void setVY(double vy_new);
+    double getVY();
+    void setM(double m_new);
+    double getM();
 
     void setPos(Vector pos_new);
     Vector getPos();
@@ -40,5 +40,5 @@ class Particle {
   private:
     Vector pos; //Position in x and y
     Vector v; //Velocity in x and y
-    long double m;
+    double m;
 };

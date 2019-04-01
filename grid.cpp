@@ -2,7 +2,7 @@
 #include "grid.h"
 
 Grid::Grid() {
-   std::cout << "Grid created" << std::endl;
+   /*std::cout << "Grid created" << std::endl;*/
 }
 
 void Grid::insert_list(int new_par){
@@ -10,44 +10,60 @@ void Grid::insert_list(int new_par){
 }
 
 void Grid::clear_particles(){ //Erases all paricles in a cell to start new movement
-  M = 0;
+  Mnext = 0;
   par_list.clear();
 }
 
-void Grid::setX (long double x_new) {
+void Grid::swap_Ms(){
+  M = Mnext;
+}
+
+void Grid::setX (double x_new) {
     center.x = x_new;
 }
 
-long double Grid::getX () {
+double Grid::getX () {
     return center.x;
 }
 
-void Grid::add_toX(long double x_new){
+void Grid::add_toX(double x_new){
     center.x += x_new;
 }
 
-void Grid::setY (long double y_new) {
+void Grid::setY (double y_new) {
     center.y = y_new;
 }
 
-long double Grid::getY () {
+double Grid::getY () {
     return center.y;
 }
 
-void Grid::add_toY (long double y_new) {
+void Grid::add_toY (double y_new) {
     center.y += y_new;
 }
 
-void Grid::setM(long double m_new){
+void Grid::setM(double m_new){
     M = m_new;
 }
 
-long double Grid::getM () {
+double Grid::getM () {
     return M;
 }
 
-void Grid::add_toM(long double m_new){
+void Grid::add_toM(double m_new){
     M += m_new;
+}
+
+void Grid::setMnext(double m_new){
+    Mnext = m_new;
+}
+
+double Grid::getMnext () {
+    return Mnext;
+}
+
+void Grid::add_toMnext(double m_new){
+    Mnext += m_new;
 }
 
 void Grid::setCenter(Vector center_new){
@@ -64,7 +80,7 @@ Vector Grid::getCenter() {
 //A lista já se encontra completa e a massa total calculada
 void Grid::update_center(Particle *par){
   std::list <int> :: iterator it;
-  long double new_x, new_y;
+  double new_x, new_y;
   center.x=0;
   center.y=0;
   // Conforme
@@ -95,6 +111,15 @@ void clear_grid (int size, Grid **grid){
   for(i=0;i<size;i++){
     for(j=0;j<size;j++){
       grid[i][j].clear_particles();
+    }
+  }
+}
+
+void swap_grid_Ms (int size, Grid **grid){
+  int i, j;
+  for(i=0;i<size;i++){
+    for(j=0;j<size;j++){
+      grid[i][j].swap_Ms();
     }
   }
 }

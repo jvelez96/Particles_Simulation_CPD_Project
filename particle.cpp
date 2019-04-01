@@ -2,11 +2,11 @@
 #include "particle.h"
 
 Particle::Particle() {
-   std::cout << "Particle created" << std::endl;
+   /*std::cout << "Particle created" << std::endl;*/
 }
 
 
-void Particle::setAll(long double x_new, long double y_new, long double vx_new, long double vy_new, long double m_new) {
+void Particle::setAll(double x_new, double y_new, double vx_new, double vy_new, double m_new) {
     pos.x = x_new;
     pos.y = y_new;
     v.x = vx_new;
@@ -14,43 +14,43 @@ void Particle::setAll(long double x_new, long double y_new, long double vx_new, 
     m = m_new;
 }
 
-void Particle::setX (long double x_new) {
+void Particle::setX (double x_new) {
     pos.x = x_new;
 }
 
-long double Particle::getX () {
+double Particle::getX () {
     return pos.x;
 }
 
-void Particle::setY (long double y_new) {
+void Particle::setY (double y_new) {
     pos.y = y_new;
 }
 
-long double Particle::getY () {
+double Particle::getY () {
     return pos.y;
 }
 
-void Particle::setVX (long double vx_new) {
+void Particle::setVX (double vx_new) {
     v.x = vx_new;
 }
 
-long double Particle::getVX () {
+double Particle::getVX () {
     return v.x;
 }
 
-void Particle::setVY (long double vy_new) {
+void Particle::setVY (double vy_new) {
     v.y = vy_new;
 }
 
-long double Particle::getVY () {
+double Particle::getVY () {
     return v.y;
 }
 
-void Particle::setM (long double m_new) {
+void Particle::setM (double m_new) {
     m = m_new;
 }
 
-long double Particle::getM () {
+double Particle::getM () {
     return m;
 }
 
