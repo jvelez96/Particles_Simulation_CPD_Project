@@ -8,6 +8,7 @@ class Grid {
     Grid();
     void insert_list(int new_par);
     void clear_particles();
+
     void setX(long double x_new);
     long double getX();
     void add_toX(long double y_new);
@@ -17,11 +18,14 @@ class Grid {
     void setM(long double M_new);
     long double getM();
     void add_toM(long double m_new);
+
+    void setCenter(Vector center_new);
+    Vector getCenter();
+
     void update_center(Particle *par);
 
   private:
-    long double x; //Coordinates of center of mass
-    long double y;
+    Vector center; //Coordinates of center of mass
     long double M; //Total mass
 
 };

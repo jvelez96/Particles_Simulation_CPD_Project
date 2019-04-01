@@ -11,6 +11,10 @@
 #include<list>
 #include<iterator>
 
+struct Vector {
+    long double x;
+    long double y;
+};
 
 class Particle {
   public:
@@ -19,19 +23,22 @@ class Particle {
 
     void setX(long double x_new);
     long double getX();
-    void setY(long double x_new);
+    void setY(long double y_new);
     long double getY();
-    void setVX(long double x_new);
+    void setVX(long double vx_new);
     long double getVX();
-    void setVY(long double x_new);
+    void setVY(long double vy_new);
     long double getVY();
-    void setM(long double x_new);
+    void setM(long double m_new);
     long double getM();
 
+    void setPos(Vector pos_new);
+    Vector getPos();
+    void setV(Vector v_new);
+    Vector getV();
+
   private:
-    long double x;
-    long double y;
-    long double vx;
-    long double vy;
+    Vector pos; //Position in x and y
+    Vector v; //Velocity in x and y
     long double m;
 };

@@ -15,27 +15,27 @@ void Grid::clear_particles(){ //Erases all paricles in a cell to start new movem
 }
 
 void Grid::setX (long double x_new) {
-    x = x_new;
+    center.x = x_new;
 }
 
 long double Grid::getX () {
-    return x;
+    return center.x;
 }
 
 void Grid::add_toX(long double x_new){
-    x += x_new;
+    center.x += x_new;
 }
 
 void Grid::setY (long double y_new) {
-    y = y_new;
+    center.y = y_new;
 }
 
 long double Grid::getY () {
-    return y;
+    return center.y;
 }
 
 void Grid::add_toY (long double y_new) {
-    y += y_new;
+    center.y += y_new;
 }
 
 void Grid::setM(long double m_new){
@@ -50,19 +50,29 @@ void Grid::add_toM(long double m_new){
     M += m_new;
 }
 
+void Grid::setCenter(Vector center_new){
+    center.x = center_new.x;
+    center.y = center_new.y;
+}
+
+Vector Grid::getCenter() {
+    return center;
+}
+
+
 //Aqui vai-se calcular o centro de massa (x, y) de uma celula com a expressao 1/M* E(mi * (x,y))
 //A lista já se encontra completa e a massa total calculada
 void Grid::update_center(Particle *par){
   std::list <int> :: iterator it;
   long double new_x, new_y;
-  x=0;
-  y=0;
+  center.x=0;
+  center.y=0;
   // Conforme
   for(it = par_list.begin(); it != par_list.end(); ++it){
     new_x = (par[*it].getX() * par[*it].getM())/M;
-    x += new_x;
+    center.x += new_x;
     new_y = (par[*it].getY() * par[*it].getM())/M;
-    y += new_y;
+    center.y += new_y;
   }
 }
 
