@@ -1,0 +1,14 @@
+ideias a fluir high vasco
+
+Cenas para paralelizar:
+  *tudo o q tem x e y, calcular os dois same time
+
+  *tudo na grid
+
+  *temos de por mais threads a correr acho nao me lembro disso
+
+  *paralelizar as 9 forças distintas
+
+  *PARALELIZAR A TUA MAE
+
+  ********nao esquecer mensagem que mandei velez sobre ceno e coseno e os ys tarem mal Amaral eheh rimou
