@@ -10,6 +10,7 @@
 #include<ctime>
 #include<list>
 #include<iterator>
+#include<omp.h>
 
 struct Vector {
     double x;

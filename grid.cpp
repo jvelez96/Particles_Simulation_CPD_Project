@@ -76,7 +76,6 @@ Vector Grid::getCenter() {
 }
 
 
-//Aqui vai-se calcular o centro de massa (x, y) de uma celula com a expressao 1/M* E(mi * (x,y))
 //A lista já se encontra completa e a massa total calculada
 void Grid::update_center(Particle *par){
   std::list <int> :: iterator it;
@@ -135,4 +134,16 @@ void update_center_all (int size, Grid **grid, Particle *par){
       std::cout << "Y: " << grid[i][j].getY() << std::endl;
     }
   }
+}
+
+/* Function to calculate overall center of mass and print it*/
+void overall_center(Particle *par, long long part_no, double totalM){
+  long long i;
+  double x=0, y=0;
+  for(i=0; i<part_no; i++){
+    x += (par[i].getX() * par[i].getM())/totalM;
+    y += (par[i].getY() * par[i].getM())/totalM;
+  }
+  std::cout << "Final Center of mass\nX: " << x << " Y: " << y << std::endl;
+
 }

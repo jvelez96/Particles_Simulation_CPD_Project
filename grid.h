@@ -39,3 +39,4 @@ void init_grid(int size, Grid **grid);
 void clear_grid(int size, Grid **grid);
 void swap_grid_Ms (int size, Grid **grid);
 void update_center_all(int size, Grid **grid, Particle *par);
+void overall_center(Particle *par, long long part_no, double totalM);

@@ -5,6 +5,7 @@ int main (int argc, char* argv[]) {
   int i, j;
   int a;
   int seed, grid_sz, part_no, steps;
+  double totalM;
 
   if (argc!=5){
     std::cout << "Incorrect number of arguments." << std::endl;
@@ -39,19 +40,26 @@ int main (int argc, char* argv[]) {
   Particle *par = new Particle[part_no];
 
   init_grid(grid_sz, grid);
-  init_particles(seed,grid_sz,part_no,par, grid);
+  totalM = init_particles(seed,grid_sz,part_no,par, grid);
 
   /* ciclo baseado no numero de steps */
   for(i=0; i<steps; i++){
     update_center_all(grid_sz, grid, par);
     clear_grid(grid_sz, grid);
-    for(j=0; j<part_no; j++){
-        move_particle(grid_sz, &par[j], grid, j);
-    }
+    #pragma omp parallel private(i)
+        {
+          #pragma omp for
+          /* 2.1. PROCESS ELEMENTS */
+          for(j=0; j<part_no; j++){
+              move_particle(grid_sz, &par[j], grid, j);
+          }
+        }
     swap_grid_Ms(grid_sz, grid);
   }
 
-  printf("%f %f", par[0].getX(), par[0].getY());
+  printf("%f %f\n", par[0].getX(), par[0].getY());
+
+  overall_center(par, part_no, totalM);
 
   return 0;
 }

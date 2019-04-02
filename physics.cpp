@@ -7,11 +7,13 @@
 //a soma de todas as massas no inicio sem complexidade extra de percorrer todas as listas de novo
 //Same para quando as particulas são movimentadas a cada iteração
 
-void init_particles(long seed, long ncside, long long n_part, Particle *par, Grid **grid){
+double init_particles(long seed, long ncside, long long n_part, Particle *par, Grid **grid){
   long long i;
   int x, y;
+  double totalM;
 
   srandom(seed);
+  totalM = 0;
 
   for(i = 0; i < n_part; i++)
   {
@@ -20,6 +22,7 @@ void init_particles(long seed, long ncside, long long n_part, Particle *par, Gri
     par[i].setVX(RND0_1 / ncside / 10.0);
     par[i].setVY(RND0_1 / ncside / 10.0);
     par[i].setM(RND0_1 * ncside / (G * 1e6 * n_part)) ;
+    totalM += par[i].getM();
 
     /*std::cout << "X: " << par[i].getX() << std::endl;
     std::cout << "Y: " << par[i].getY() << std::endl;
@@ -36,6 +39,7 @@ void init_particles(long seed, long ncside, long long n_part, Particle *par, Gri
     /*showlist(grid[x][y].par_list);
     printf("x:%lld y:%lld\ntotal M:%f\n",x,y, grid[x][y].getM());*/
   }
+  return totalM;
 }
 
 double get_distance(Vector a, Vector b){
@@ -196,6 +200,8 @@ void move_particle(long grid_sz, Particle *par, Grid **grid, long long id){
   Gy = floor(par->getY() * grid_sz);
   grid[Gx][Gy].insert_list(id);
   grid[Gx][Gy].add_toMnext(par->getM());
+
+  printf("%lld \n", id);
 }
 
 
