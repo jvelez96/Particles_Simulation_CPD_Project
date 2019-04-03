@@ -71,10 +71,9 @@ void update_center_all (long size, Grid **grid, Particle *par){
   for(i=0;i<size;i++){
     for(j=0;j<size;j++){
       update_center_one(par, &grid[i][j]);
-      /*
+
       printf("Center of Mass\nX: %f\n", grid[i][j].center.x);
       printf("Center of Mass\nY: %f\n", grid[i][j].center.y);
-      */
     }
   }
 }

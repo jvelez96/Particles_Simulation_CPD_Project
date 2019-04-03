@@ -38,7 +38,7 @@ int main (int argc, char* argv[]) {
     update_center_all(grid_sz, grid, par);
     clear_grid(grid_sz, grid);
 
-    #pragma omp parallel
+    #pragma omp parallel private(i)
         {
           #pragma omp for
           /* 2.1. PROCESS ELEMENTS */
@@ -58,7 +58,7 @@ int main (int argc, char* argv[]) {
   double accum = ( requestEnd.tv_sec - requestStart.tv_sec )
     + ( requestEnd.tv_nsec - requestStart.tv_nsec )
     / BILLION;
-  printf( "It took: %lfs\n", accum);
+  printf( "time of function: %lfs\n", accum);
   return 0;
 
 }
