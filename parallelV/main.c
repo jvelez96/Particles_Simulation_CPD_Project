@@ -38,9 +38,10 @@ int main (int argc, char* argv[]) {
   for(i=0; i<steps; i++){
     update_center_all(grid_sz, grid, par);
     clear_grid(grid_sz, grid);
-    #pragma omp parallel private (i)
+
+    #pragma omp parallel
         {
-          #pragma omp for
+          #pragma omp for private (i)
           /* 2.1. PROCESS ELEMENTS */
           for(j=0; j<part_no; j++){
               move_particle(grid_sz, &par[j], grid, j);
