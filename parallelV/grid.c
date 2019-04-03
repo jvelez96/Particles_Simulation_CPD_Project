@@ -67,25 +67,36 @@ void update_center_one(Particle *par, Grid *grid){
 /* Função para fazer o update geral de todos os centros de massa com base nas particulas que tem no momento */
 void update_center_all (long size, Grid **grid, Particle *par){
   long i, j;
+  #pragma omp parallel
+      {
+        #pragma omp for private (i, j)
 
-  for(i=0;i<size;i++){
-    for(j=0;j<size;j++){
-      update_center_one(par, &grid[i][j]);
-
-      printf("Center of Mass\nX: %f\n", grid[i][j].center.x);
-      printf("Center of Mass\nY: %f\n", grid[i][j].center.y);
-    }
-  }
+        for(i=0;i<size;i++){
+          for(j=0;j<size;j++){
+            update_center_one(par, &grid[i][j]);
+            /*
+            printf("Center of Mass\nX: %f\n", grid[i][j].center.x);
+            printf("Center of Mass\nY: %f\n", grid[i][j].center.y);
+            */
+          }
+        }
+      }
 }
 
 /* Function to calculate overall center of mass and print it*/
 void overall_center(Particle *par, long long part_no, double totalM){
   long long i;
   double x=0, y=0;
-  for(i=0; i<part_no; i++){
-    x += (par[i].pos.x * par[i].m)/totalM;
-    y += (par[i].pos.y * par[i].m)/totalM;
-  }
+  struct timespec requestStart, requestEnd;
+
+  #pragma omp parallel
+      {
+        #pragma omp for private (i)
+        for(i=0; i<part_no; i++){
+          x += (par[i].pos.x * par[i].m)/totalM;
+          y += (par[i].pos.y * par[i].m)/totalM;
+        }
+      }
   printf("Final Center of mass\nX: %.2f Y: %.2f\n", x, y);
 }
 

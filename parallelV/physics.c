@@ -213,6 +213,4 @@ void move_particle(long grid_sz, Particle *par, Grid **grid, long long id){
 
   grid[Gx][Gy].par_list = insertUnsortedLinkedList(grid[Gx][Gy].par_list, id);
   grid[Gx][Gy].Mnext += par->m;
-
-  printf("%lld \n", id);
 }

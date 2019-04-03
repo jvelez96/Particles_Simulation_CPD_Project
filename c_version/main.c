@@ -7,7 +7,7 @@ int main (int argc, char* argv[]) {
   long seed, grid_sz, steps;
   long long part_no;
   double totalM;
-  struct timespec requestStart, requestEnd;
+  struct timespec requestStart, requestEnd, moveStart, moveEnd;
 
   if (argc!=5){
     printf("Incorrect number of arguments.\n");
@@ -19,10 +19,11 @@ int main (int argc, char* argv[]) {
   part_no = atoi(argv[3]);
   steps = atoi(argv[4]);
 
-  printf("Seed nº: %ld\n", seed);
+  /*
+  printf("Seed nº: %ld\n", *seed);
   printf("Grid size: %ld\n", grid_sz);
   printf("Nº of particles: %lld\n", part_no);
-  printf("Nº of steps: %ld\n", steps);
+  printf("Nº of steps: %ld\n", steps);*/
 
   //Start both structures
   Grid **grid = NULL;
@@ -32,13 +33,12 @@ int main (int argc, char* argv[]) {
   par = (Particle*) malloc(sizeof(Particle) * part_no);
   totalM = init_particles(seed,grid_sz,part_no,par, grid);
 
-  /* ciclo baseado no numero de steps */
   clock_gettime(CLOCK_REALTIME, &requestStart);
+  /* ciclo baseado no numero de steps */
   for(i=0; i<steps; i++){
     update_center_all(grid_sz, grid, par);
     clear_grid(grid_sz, grid);
-
-    #pragma omp parallel
+    #pragma omp parallel private (i)
         {
           #pragma omp for
           /* 2.1. PROCESS ELEMENTS */
