@@ -1,8 +1,8 @@
 //grid.c
 #include "grid.h"
 
-Grid **init_grid(int size){
-    int i, j;
+Grid **init_grid(long size){
+    long i, j;
 
     Grid **grid = NULL;
 
@@ -22,8 +22,8 @@ Grid **init_grid(int size){
     return grid;
 }
 
-void clear_grid (int size, Grid **grid){
-  int i, j;
+void clear_grid (long size, Grid **grid){
+  long i, j;
   for(i=0;i<size;i++){
     for(j=0;j<size;j++){
       grid[i][j].Mnext = 0;
@@ -33,8 +33,8 @@ void clear_grid (int size, Grid **grid){
   }
 }
 
-void swap_grid_Ms (int size, Grid **grid){
-  int i, j;
+void swap_grid_Ms (long size, Grid **grid){
+  long i, j;
   for(i=0;i<size;i++){
     for(j=0;j<size;j++){
       grid[i][j].M = grid[i][j].Mnext;
@@ -65,8 +65,8 @@ void update_center_one(Particle *par, Grid *grid){
 }
 
 /* Função para fazer o update geral de todos os centros de massa com base nas particulas que tem no momento */
-void update_center_all (int size, Grid **grid, Particle *par){
-  int i, j;
+void update_center_all (long size, Grid **grid, Particle *par){
+  long i, j;
 
   for(i=0;i<size;i++){
     for(j=0;j<size;j++){
@@ -86,5 +86,17 @@ void overall_center(Particle *par, long long part_no, double totalM){
     x += (par[i].pos.x * par[i].m)/totalM;
     y += (par[i].pos.y * par[i].m)/totalM;
   }
-  printf("Final Center of mass\nX: %f Y: %f\n", x, y);
+  printf("Final Center of mass\nX: %.2f Y: %.2f\n", x, y);
+}
+
+void free_all(Particle *par, Grid  **grid, long grid_sz){
+  long i, j;
+
+  free(par);
+  for(i = 0; i < grid_sz; i++){
+    for(j = 0; j < grid_sz; j++)
+      freeLinkedList(grid[i][j].par_list);
+    free(grid[i]);
+  }
+  free(grid);
 }

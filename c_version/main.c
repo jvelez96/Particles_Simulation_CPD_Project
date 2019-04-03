@@ -46,9 +46,10 @@ int main (int argc, char* argv[]) {
     swap_grid_Ms(grid_sz, grid);
   }
 
-  printf("%f %f\n", par[0].pos.x, par[0].pos.y);
+  printf("%.2f %.2f\n", par[0].pos.x, par[0].pos.y);
 
   overall_center(par, part_no, totalM);
+  free_all(par, grid, grid_sz); //Frees all memory 
 
   return 0;
 

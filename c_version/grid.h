@@ -19,9 +19,10 @@ typedef struct GridStruct {
     LinkedList *par_list;
 } Grid;
 
-Grid **init_grid(int size);
-void clear_grid(int size, Grid **grid);
-void swap_grid_Ms (int size, Grid **grid);
+Grid **init_grid(long size);
+void clear_grid(long size, Grid **grid);
+void swap_grid_Ms (long size, Grid **grid);
 void update_center_one(Particle *par, Grid *grid);
-void update_center_all(int size, Grid **grid, Particle *par);
+void update_center_all(long size, Grid **grid, Particle *par);
 void overall_center(Particle *par, long long part_no, double totalM);
+void free_all(Particle *par, Grid  **grid, long grid_sz);
