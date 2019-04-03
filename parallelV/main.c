@@ -41,8 +41,8 @@ int main (int argc, char* argv[]) {
 
     #pragma omp parallel
         {
-          #pragma omp for private (i)
           /* 2.1. PROCESS ELEMENTS */
+          #pragma omp for
           for(j=0; j<part_no; j++){
               move_particle(grid_sz, &par[j], grid, j);
           }
