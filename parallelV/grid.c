@@ -52,10 +52,8 @@ void update_center_one(Particle *par, Grid *grid){
   while(curr != NULL){
     i = getItemLinkedList(curr);
 
-    new_x = (par[i].pos.x * par[i].m)/grid->M;
-    x += new_x;
-    new_y = (par[i].pos.y * par[i].m)/grid->M;
-    y += new_y;
+    x += (par[i].pos.x * par[i].m)/grid->M;
+    y += (par[i].pos.y * par[i].m)/grid->M;
 
     curr = getNextNodeLinkedList(curr);
   }
