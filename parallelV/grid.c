@@ -24,38 +24,48 @@ Grid **init_grid(long size){
 
 void clear_grid (long size, Grid **grid){
   long i, j;
-  for(i=0;i<size;i++){
-    for(j=0;j<size;j++){
-      grid[i][j].Mnext = 0;
-      freeLinkedList(grid[i][j].par_list);
-      grid[i][j].par_list = initLinkedList();
-    }
-  }
+
+  #pragma omp parallel
+      {
+        /* 2.1. PROCESS ELEMENTS */
+        #pragma omp for private (i,j)
+        for(i=0;i<size;i++){
+          for(j=0;j<size;j++){
+            grid[i][j].Mnext = 0;
+            freeLinkedList(grid[i][j].par_list);
+            grid[i][j].par_list = initLinkedList();
+          }
+        }
+      }
 }
 
 void swap_grid_Ms (long size, Grid **grid){
   long i, j;
-  for(i=0;i<size;i++){
-    for(j=0;j<size;j++){
-      grid[i][j].M = grid[i][j].Mnext;
-    }
-  }
+  #pragma omp parallel
+      {
+        /* 2.1. PROCESS ELEMENTS */
+        #pragma omp for private (i,j)
+        for(i=0;i<size;i++){
+          for(j=0;j<size;j++){
+            grid[i][j].M = grid[i][j].Mnext;
+          }
+        }
+      }
 }
 
 //A lista já se encontra completa e a massa total calculada
 void update_center_one(Particle *par, Grid *grid){
   long long i;
-  double new_x, new_y;
   double x = 0, y = 0; //Criamos variaveis auxiliares para nao ir à memoria alterar o valor cada vez que se incrementa, péssima performance
   LinkedList *curr = grid->par_list;
 
   while(curr != NULL){
     i = getItemLinkedList(curr);
-
-    new_x = (par[i].pos.x * par[i].m)/grid->M;
-    x += new_x;
-    new_y = (par[i].pos.y * par[i].m)/grid->M;
-    y += new_y;
+    /* Protect against race conditions among multiple updates. */
+    //#pragma omp atomic -> Parece-me que nao e preciso visto que so existe um x e um y dentro de cada thread
+    x += (par[i].pos.x * par[i].m)/grid->M;
+    //#pragma omp atomic
+    y += (par[i].pos.y * par[i].m)/grid->M;
 
     curr = getNextNodeLinkedList(curr);
   }
@@ -67,10 +77,13 @@ void update_center_one(Particle *par, Grid *grid){
 /* Função para fazer o update geral de todos os centros de massa com base nas particulas que tem no momento */
 void update_center_all (long size, Grid **grid, Particle *par){
   long i, j;
+  struct timespec requestStart, requestEnd;
+
+  //clock_gettime(CLOCK_REALTIME, &requestStart);
   #pragma omp parallel
       {
-        #pragma omp for private (i, j)
-
+        /* 2.1. PROCESS ELEMENTS */
+        #pragma omp for private (i,j)
         for(i=0;i<size;i++){
           for(j=0;j<size;j++){
             update_center_one(par, &grid[i][j]);
@@ -81,22 +94,25 @@ void update_center_all (long size, Grid **grid, Particle *par){
           }
         }
       }
+      /*
+  clock_gettime(CLOCK_REALTIME, &requestEnd);
+  // Calculate time it took
+  double accum = ( requestEnd.tv_sec - requestStart.tv_sec )
+    + ( requestEnd.tv_nsec - requestStart.tv_nsec )
+    / BILLION;
+  //printf( "update center all took: %lfs\n", accum);*/
 }
 
 /* Function to calculate overall center of mass and print it*/
 void overall_center(Particle *par, long long part_no, double totalM){
   long long i;
   double x=0, y=0;
-  struct timespec requestStart, requestEnd;
 
-  #pragma omp parallel
-      {
-        #pragma omp for private (i)
-        for(i=0; i<part_no; i++){
-          x += (par[i].pos.x * par[i].m)/totalM;
-          y += (par[i].pos.y * par[i].m)/totalM;
-        }
-      }
+  for(i=0; i<part_no; i++){
+    x += (par[i].pos.x * par[i].m)/totalM;
+    y += (par[i].pos.y * par[i].m)/totalM;
+  }
+
   printf("Final Center of mass\nX: %.2f Y: %.2f\n", x, y);
 }
 
