@@ -27,7 +27,6 @@ void clear_grid (long size, Grid **grid){
 
   #pragma omp parallel
       {
-        /* 2.1. PROCESS ELEMENTS */
         #pragma omp for private (i,j)
         for(i=0;i<size;i++){
           for(j=0;j<size;j++){
@@ -43,7 +42,6 @@ void swap_grid_Ms (long size, Grid **grid){
   long i, j;
   #pragma omp parallel
       {
-        /* 2.1. PROCESS ELEMENTS */
         #pragma omp for private (i,j)
         for(i=0;i<size;i++){
           for(j=0;j<size;j++){
@@ -77,12 +75,9 @@ void update_center_one(Particle *par, Grid *grid){
 /* Função para fazer o update geral de todos os centros de massa com base nas particulas que tem no momento */
 void update_center_all (long size, Grid **grid, Particle *par){
   long i, j;
-  struct timespec requestStart, requestEnd;
 
-  //clock_gettime(CLOCK_REALTIME, &requestStart);
   #pragma omp parallel
       {
-        /* 2.1. PROCESS ELEMENTS */
         #pragma omp for private (i,j)
         for(i=0;i<size;i++){
           for(j=0;j<size;j++){
@@ -94,13 +89,6 @@ void update_center_all (long size, Grid **grid, Particle *par){
           }
         }
       }
-      /*
-  clock_gettime(CLOCK_REALTIME, &requestEnd);
-  // Calculate time it took
-  double accum = ( requestEnd.tv_sec - requestStart.tv_sec )
-    + ( requestEnd.tv_nsec - requestStart.tv_nsec )
-    / BILLION;
-  //printf( "update center all took: %lfs\n", accum);*/
 }
 
 /* Function to calculate overall center of mass and print it*/
@@ -108,10 +96,12 @@ void overall_center(Particle *par, long long part_no, double totalM){
   long long i;
   double x=0, y=0;
 
-  for(i=0; i<part_no; i++){
+  #pragma omp parallel for private(i) reduction(+:x) reduction(+:y)
+  for (i = 0; i < part_no; i++){
     x += (par[i].pos.x * par[i].m)/totalM;
     y += (par[i].pos.y * par[i].m)/totalM;
   }
+
 
   //printf("Final Center of mass\nX: %.2f Y: %.2f\n", x, y);
   printf("%.2f %.2f\n", x, y);
@@ -121,10 +111,15 @@ void free_all(Particle *par, Grid  **grid, long grid_sz){
   long i, j;
 
   free(par);
-  for(i = 0; i < grid_sz; i++){
-    for(j = 0; j < grid_sz; j++)
-      freeLinkedList(grid[i][j].par_list);
-    free(grid[i]);
-  }
+  #pragma omp parallel
+      {
+        #pragma omp for private (i,j)
+        for(i = 0; i < grid_sz; i++){
+          for(j = 0; j < grid_sz; j++)
+            freeLinkedList(grid[i][j].par_list);
+
+          free(grid[i]);
+        }
+      }
   free(grid);
 }

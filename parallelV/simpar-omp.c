@@ -7,19 +7,39 @@ int main (int argc, char* argv[]) {
   long seed, grid_sz, steps;
   long long part_no;
   double totalM;
-  struct timespec requestStart, requestEnd, moveStart, moveEnd;
+  //struct timespec requestStart, requestEnd, moveStart, moveEnd;
 
   if (argc!=5){
     printf("Incorrect number of arguments.\n");
     exit(1);
   }
 
-  seed = atoi(argv[1]);
+  if(!sscanf(argv[1], "%ld", &seed)){
+    printf("Incorrect format provided for seed\n");
+    exit(1);
+  }
+
+  if(!sscanf(argv[2], "%ld", &grid_sz)){
+    printf("Incorrect format provided for size of grid\n");
+    exit(1);
+  }
+
+  if(!sscanf(argv[3], "%lld", &part_no)){
+    printf("Incorrect format provided for nº of particles\n");
+    exit(1);
+  }
+
+  if(!sscanf(argv[4], "%ld", &steps)){
+    printf("Incorrect format provided for nº of time steps\n");
+    exit(1);
+  }
+
+  /*seed = atoi(argv[1]);
   grid_sz = atoi(argv[2]);
   part_no = atoi(argv[3]);
   steps = atoi(argv[4]);
 
-  /*
+
   printf("Seed nº: %ld\n", *seed);
   printf("Grid size: %ld\n", grid_sz);
   printf("Nº of particles: %lld\n", part_no);
@@ -33,7 +53,7 @@ int main (int argc, char* argv[]) {
   par = (Particle*) malloc(sizeof(Particle) * part_no);
   totalM = init_particles(seed,grid_sz,part_no,par, grid);
 
-  clock_gettime(CLOCK_REALTIME, &requestStart);
+  //clock_gettime(CLOCK_REALTIME, &requestStart);
   /* ciclo baseado no numero de steps */
   for(i=0; i<steps; i++){
     update_center_all(grid_sz, grid, par);
@@ -54,12 +74,12 @@ int main (int argc, char* argv[]) {
   overall_center(par, part_no, totalM);
   free_all(par, grid, grid_sz); //Frees all memory
 
-  clock_gettime(CLOCK_REALTIME, &requestEnd);
+  //clock_gettime(CLOCK_REALTIME, &requestEnd);
   // Calculate time it took
-  double accum = ( requestEnd.tv_sec - requestStart.tv_sec )
+  /*double accum = ( requestEnd.tv_sec - requestStart.tv_sec )
     + ( requestEnd.tv_nsec - requestStart.tv_nsec )
     / BILLION;
-  printf( "It took: %lfs\n", accum);
+  printf( "It took: %lfs\n", accum);*/
   return 0;
 
 }
