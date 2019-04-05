@@ -97,7 +97,8 @@ void overall_center(Particle *par, long long part_no, double totalM){
           y += (par[i].pos.y * par[i].m)/totalM;
         }
       }
-  printf("Final Center of mass\nX: %.2f Y: %.2f\n", x, y);
+  //printf("Final Center of mass\nX: %.2f Y: %.2f\n", x, y);
+  printf("%.2f %.2f\n", x, y);
 }
 
 void free_all(Particle *par, Grid  **grid, long grid_sz){
