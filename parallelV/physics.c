@@ -211,7 +211,7 @@ void move_particle(long grid_sz, Particle *par, Grid **grid, long long id){
   if(Gy == grid_sz)
       Gy = grid_sz - 1;
 
-  
+
   grid[Gx][Gy].par_list = insertUnsortedLinkedList(grid[Gx][Gy].par_list, id);
   grid[Gx][Gy].Mnext += par->m;
 }
