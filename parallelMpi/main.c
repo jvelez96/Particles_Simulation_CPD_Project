@@ -65,7 +65,7 @@ int main (int argc, char* argv[]) {
   clock_gettime(CLOCK_REALTIME, &requestStart);
   /* ciclo baseado no numero de steps */
   for(i=0; i<steps; i++){
-    update_center_all(grid_sz, grid, par);
+    update_center_all(part_no, grid_sz, grid, par);
     clear_grid(grid_sz, grid);
 
     #pragma omp parallel

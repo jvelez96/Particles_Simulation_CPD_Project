@@ -24,13 +24,6 @@ double init_particles(long seed, long ncside, long long n_part, Particle *par, G
     par[i].m = (RND0_1 * ncside / (G * 1e6 * n_part));
     totalM += par[i].m;
 
-    /*std::cout << "X: " << par[i].getX() << std::endl;
-    std::cout << "Y: " << par[i].getY() << std::endl;
-    std::cout << "VX: " << par[i].getVX() << std::endl;
-    std::cout << "VY: " << par[i].getVY() << std::endl;
-    std::cout << "M: " << par[i].getM() << std::endl;
-    std::cout << "\n";*/
-
     //Insert in grid after creation
     x = floor(par[i].pos.x * ncside);
     if(x == ncside)
@@ -39,12 +32,8 @@ double init_particles(long seed, long ncside, long long n_part, Particle *par, G
     if(y == ncside)
         y = ncside - 1;
 
-    grid[x][y].par_list = insertUnsortedLinkedList(grid[x][y].par_list, i);
     grid[x][y].M += par[i].m;
 
-
-    /*showlist(grid[x][y].par_list);
-    printf("x:%lld y:%lld\ntotal M:%f\n",x,y, grid[x][y].getM());*/
   }
   return totalM;
 }
@@ -211,7 +200,5 @@ void move_particle(long grid_sz, Particle *par, Grid **grid, long long id){
   if(Gy == grid_sz)
       Gy = grid_sz - 1;
 
-  
-  grid[Gx][Gy].par_list = insertUnsortedLinkedList(grid[Gx][Gy].par_list, id);
   grid[Gx][Gy].Mnext += par->m;
 }

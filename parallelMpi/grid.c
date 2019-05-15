@@ -15,7 +15,6 @@ Grid **init_grid(long size){
             grid[i][j].center.y = 0;
             grid[i][j].M = 0;
             grid[i][j].Mnext = 0;
-            grid[i][j].par_list = initLinkedList();
         }
     }
 
@@ -24,84 +23,46 @@ Grid **init_grid(long size){
 
 void clear_grid (long size, Grid **grid){
   long i, j;
-
-  #pragma omp parallel
-      {
-        /* 2.1. PROCESS ELEMENTS */
-        #pragma omp for private (i,j)
-        for(i=0;i<size;i++){
-          for(j=0;j<size;j++){
-            grid[i][j].Mnext = 0;
-            freeLinkedList(grid[i][j].par_list);
-            grid[i][j].par_list = initLinkedList();
-          }
-        }
-      }
+  for(i=0;i<size;i++){
+    for(j=0;j<size;j++){
+      grid[i][j].Mnext = 0;
+    }
+  }
 }
 
 void swap_grid_Ms (long size, Grid **grid){
   long i, j;
-  #pragma omp parallel
-      {
-        /* 2.1. PROCESS ELEMENTS */
-        #pragma omp for private (i,j)
-        for(i=0;i<size;i++){
-          for(j=0;j<size;j++){
-            grid[i][j].M = grid[i][j].Mnext;
-          }
-        }
-      }
-}
-
-//A lista já se encontra completa e a massa total calculada
-void update_center_one(Particle *par, Grid *grid){
-  long long i;
-  double x = 0, y = 0; //Criamos variaveis auxiliares para nao ir à memoria alterar o valor cada vez que se incrementa, péssima performance
-  LinkedList *curr = grid->par_list;
-
-  while(curr != NULL){
-    i = getItemLinkedList(curr);
-    /* Protect against race conditions among multiple updates. */
-    //#pragma omp atomic -> Parece-me que nao e preciso visto que so existe um x e um y dentro de cada thread
-    x += (par[i].pos.x * par[i].m)/grid->M;
-    //#pragma omp atomic
-    y += (par[i].pos.y * par[i].m)/grid->M;
-
-    curr = getNextNodeLinkedList(curr);
+  for(i=0;i<size;i++){
+    for(j=0;j<size;j++){
+      grid[i][j].M = grid[i][j].Mnext;
+      grid[i][j].center.x = 0; //Clears mass centers for next iteration
+      grid[i][j].center.y = 0;
+    }
   }
-
-  grid->center.x = x;
-  grid->center.y = y;
 }
 
-/* Função para fazer o update geral de todos os centros de massa com base nas particulas que tem no momento */
-void update_center_all (long size, Grid **grid, Particle *par){
-  long i, j;
-  struct timespec requestStart, requestEnd;
+/* Função para fazer o update geral de todos os centros de massa*/
+void update_center_all (long long part_no, long size, Grid **grid, Particle *par){
+  long long i;
+  int Gx, Gy;
+  double new_x, new_y;
 
-  //clock_gettime(CLOCK_REALTIME, &requestStart);
-  #pragma omp parallel
-      {
-        /* 2.1. PROCESS ELEMENTS */
-        #pragma omp for private (i,j)
-        for(i=0;i<size;i++){
-          for(j=0;j<size;j++){
-            update_center_one(par, &grid[i][j]);
-            /*
-            printf("Center of Mass\nX: %f\n", grid[i][j].center.x);
-            printf("Center of Mass\nY: %f\n", grid[i][j].center.y);
-            */
-          }
-        }
-      }
-      /*
-  clock_gettime(CLOCK_REALTIME, &requestEnd);
-  // Calculate time it took
-  double accum = ( requestEnd.tv_sec - requestStart.tv_sec )
-    + ( requestEnd.tv_nsec - requestStart.tv_nsec )
-    / BILLION;
-  //printf( "update center all took: %lfs\n", accum);*/
+  for(i=0;i<part_no;i++){
+      Gx = floor(par[i].pos.x * size);
+      if(Gx == size)
+          Gx = size - 1;
+      Gy = floor(par[i].pos.y * size);
+      if(Gy == size)
+          Gy = size - 1;
+
+
+      new_x = (par[i].pos.x * par[i].m)/grid[Gx][Gy].M;
+      grid[Gx][Gy].center.x += new_x;
+      new_y = (par[i].pos.y * par[i].m)/grid[Gx][Gy].M;
+      grid[Gx][Gy].center.y += new_y;
+  }
 }
+
 
 /* Function to calculate overall center of mass and print it*/
 void overall_center(Particle *par, long long part_no, double totalM){
@@ -113,17 +74,15 @@ void overall_center(Particle *par, long long part_no, double totalM){
     y += (par[i].pos.y * par[i].m)/totalM;
   }
 
-  printf("Final Center of mass\nX: %.2f Y: %.2f\n", x, y);
+  //printf("Final Center of mass\nX: %.2f Y: %.2f\n", x, y);
+  printf("%.2f %.2f\n", x, y);
 }
 
 void free_all(Particle *par, Grid  **grid, long grid_sz){
   long i, j;
 
   free(par);
-  for(i = 0; i < grid_sz; i++){
-    for(j = 0; j < grid_sz; j++)
-      freeLinkedList(grid[i][j].par_list);
+  for(i = 0; i < grid_sz; i++)
     free(grid[i]);
-  }
   free(grid);
 }
