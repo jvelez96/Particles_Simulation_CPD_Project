@@ -17,7 +17,7 @@ void divide_cells(int n_pr, int grid_sz, int rem, int *cell_block){
   return;
 }
 
-void task_owner(int )
+void task_owner(int grid_sz, int n_pr, )
 
 int main (int argc, char* argv[]) {
   int p_rank, n_pr, grid_sz;
