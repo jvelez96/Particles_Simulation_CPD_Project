@@ -1,16 +1,27 @@
 //main.c
 #include "physics.h"
 
+
 int main (int argc, char* argv[]) {
   int i, j;
+  int p_rank, n_pr;
+  int *cell_block;
+  int rem;
   int a;
   long seed, grid_sz, steps;
   long long part_no;
   double totalM;
+  MPI_Status status;
   struct timespec requestStart, requestEnd, moveStart, moveEnd;
+
+  MPI_Init (&argc, &argv);
+
+  MPI_Comm_rank (MPI_COMM_WORLD, &p_rank);
+  MPI_Comm_size (MPI_COMM_WORLD, &n_pr);
 
   if (argc!=5){
     printf("Incorrect number of arguments.\n");
+    MPI_Finalize();
     exit(1);
   }
 
@@ -18,6 +29,24 @@ int main (int argc, char* argv[]) {
   grid_sz = atoi(argv[2]);
   part_no = atoi(argv[3]);
   steps = atoi(argv[4]);
+
+  cell_block = malloc(sizeof(int)* n_pr);
+  rem = grid_sz % n_pr;
+
+  /*
+  void divide_cells(int n_pr, int grid_sz, int rem, int *cell_block){
+    int i;
+
+    for(i=0; i<n_pr; i++){
+      cell_block[i] = i* floor(grid_sz/n_pr) + min(i, rem);
+    }
+
+    return;
+  }
+
+
+  */
+  divide_cells(n_pr, grid_sz, rem, cell_block);
 
   /*
   printf("Seed nº: %ld\n", *seed);
@@ -60,6 +89,7 @@ int main (int argc, char* argv[]) {
     + ( requestEnd.tv_nsec - requestStart.tv_nsec )
     / BILLION;
   printf( "It took: %lfs\n", accum);
+  MPI_Finalize();
   return 0;
 
 }
