@@ -7,7 +7,7 @@
 #define PARBUFFER 20000
 #define PARTAG 123
 
-void divide_par(int n_pr, int part_no, int rem, int *par_block){
+void divide_par(int n_pr, long long part_no, int rem, int *par_block){
   int i;
 
   for(i=0; i<n_pr; i++){
@@ -17,19 +17,18 @@ void divide_par(int n_pr, int part_no, int rem, int *par_block){
   return;
 }
 
-int get_par_number(int part_no, int *par_block, int n_rank, int n_pr){
-  int par_number;
+long long get_par_number(long long part_no, int *par_block, int n_rank, int n_pr){
+  long long par_number;
 
-  if(n_rank != n_pr-1){
+  if(n_rank != n_pr-1)
     par_number = par_block[n_rank+1] - par_block[n_rank];
-  }else{
+  else
     par_number = part_no - par_block[n_rank];
-  }
+
 
   return par_number;
 }
 
-int
 
 int task_owner(int part_no, int n_pr, int rem, int par){
   int i;

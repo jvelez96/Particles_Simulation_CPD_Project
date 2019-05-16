@@ -30,6 +30,6 @@ int cell_id(int x, int y, int grid_sz);
 Grid **init_grid(long size);
 void clear_grid(long size, Grid **grid);
 void swap_grid_Ms (long size, Grid **grid);
-void update_center_all(long long part_no, long size, Grid **grid, Particle *par);
-void overall_center(Particle *par, long long part_no, double totalM);
+void update_center_local(long long part_no, long size, Grid **grid, Particle *par);
+void overall_center_local(Particle *par, Grid **grid, long long part_no, double totalM);
 void free_all(Particle *par, Grid  **grid, long grid_sz);
