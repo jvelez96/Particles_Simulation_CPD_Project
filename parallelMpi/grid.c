@@ -184,11 +184,13 @@ void broadcast_totalM(int p_rank, int n_pr, double *totalM){
     }
 }
 
-void free_all(Particle *par, Grid  **grid, long grid_sz){
+void free_all(Particle *par, Grid  **grid, long grid_sz, int *par_block, double *par_buffer){
   long i, j;
 
   free(par);
   for(i = 0; i < grid_sz; i++)
     free(grid[i]);
   free(grid);
+  free(par_block);
+  free(par_buffer);
 }

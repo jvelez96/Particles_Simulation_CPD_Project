@@ -94,7 +94,7 @@ int main (int argc, char* argv[]) {
     printf("%.2f %.2f\n", x, y);
   }
 
-  free_all(par, grid, grid_sz); //Frees all memory
+  free_all(par, grid, grid_sz, par_block, par_buffer); //Frees all memory
 
 
   MPI_Finalize();

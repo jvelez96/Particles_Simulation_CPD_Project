@@ -50,14 +50,13 @@ double init_particles(long seed, long ncside, long long n_part, Particle *par, G
   int j;
   int x, y;
   double totalM;
-  double *par_buffer = NULL;
+  double par_buffer[PARBUFFER*5];
   int pr_counter=1, buf_counter=0;
   int status;
 
   srandom(seed);
   totalM = 0;
 
-  par_buffer = (double*) malloc(sizeof(double)*PARBUFFER*5);
   for(i = 0; i < n_part; i++){
     if(i<par_block[1]){
       par[i].pos.x = RND0_1;
