@@ -99,9 +99,7 @@ double init_particles(long seed, long ncside, long long n_part, Particle *par, G
 
       if(buf_counter==PARBUFFER*5){
         //send par_buffer
-        for(j=1;j<n_pr;j++){
-          MPI_Send(par_buffer, PARBUFFER*5, MPI_DOUBLE, j, PARTAG, MPI_COMM_WORLD, &status);
-        }
+        MPI_Send(par_buffer, PARBUFFER*5, MPI_DOUBLE, pr_counter, PARTAG, MPI_COMM_WORLD, &status);
 
         //clear par_buffer
         for(j=0; j<buf_counter;j++){
@@ -116,9 +114,8 @@ double init_particles(long seed, long ncside, long long n_part, Particle *par, G
         if((i+1) == par_block[pr_counter+1]){
           par_buffer[buff_counter]= -1;
           //send par_buffer
-          for(j=1;j<n_pr;j++){
-            MPI_Send(par_buffer, PARBUFFER*5, MPI_DOUBLE, j, PARTAG, MPI_COMM_WORLD, &status);
-          }
+          MPI_Send(par_buffer, PARBUFFER*5, MPI_DOUBLE, pr_counter, PARTAG, MPI_COMM_WORLD, &status);
+
           //clear par_buffer
           for(j=0; j<buf_counter+1;j++){
             par_buffer[j] = 0.0;
@@ -130,9 +127,8 @@ double init_particles(long seed, long ncside, long long n_part, Particle *par, G
       }else if((buf_counter != 0)&&(i==n_part-1)){
         par_buffer[buff_counter]= -1;
         //send par_buffer
-        for(j=1;j<n_pr;j++){
-          MPI_Send(par_buffer, PARBUFFER*5, MPI_DOUBLE, j, PARTAG, MPI_COMM_WORLD, &status);
-        }
+        MPI_Send(par_buffer, PARBUFFER*5, MPI_DOUBLE, pr_counter, PARTAG, MPI_COMM_WORLD, &status);
+
         //clear par_buffer
         for(j=0; j<buf_counter+1;j++){
           par_buffer[j] = 0.0;
@@ -144,10 +140,10 @@ double init_particles(long seed, long ncside, long long n_part, Particle *par, G
   return totalM;
 }
 
-int fill_par_buffer(double *par_buffer, Particle *par, int aux_i, int pr_part_no, Grid **grid, int grid_sz){
-  int i;
-  int aux;
-  int x,y;
+long long fill_par_buffer(double *par_buffer, Particle *par, long long aux_i, long long pr_part_no, Grid **grid, long grid_sz){
+  long long i;
+  long long aux;
+  long x,y;
 
   for(i=aux_i; i<pr_part_no; i++){
     if(par_buffer[i*4] == -1){
