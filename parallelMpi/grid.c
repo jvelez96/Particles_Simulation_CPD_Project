@@ -102,7 +102,7 @@ void broadcast_mass_centers(Grid **grid, int p_rank, int n_pr, long grid_sz){
     }
 
     for(d = 0; d < n_pr; d++)
-        MPI_Bcast(buffers[d], 2*grid_sz*grid_sz, MPI_INT, d, MPI_COMM_WORLD);
+        MPI_Bcast(buffers[d], 2*grid_sz*grid_sz, MPI_DOUBLE, d, MPI_COMM_WORLD);
 
     l = 0;
     for(i = 0; i < grid_sz; i++){

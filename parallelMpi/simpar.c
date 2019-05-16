@@ -6,7 +6,6 @@ int main (int argc, char* argv[]) {
   int p_rank, n_pr;
   int *par_block;
   int rem;
-  int a;
   long seed, grid_sz, steps;
   long long part_no, pr_part_no;
   long long aux_i=0;
@@ -44,14 +43,12 @@ int main (int argc, char* argv[]) {
   grid = init_grid(grid_sz);
 
   pr_part_no = get_par_number(part_no, par_block, p_rank,n_pr);
-  printf("Process: %d   part: %lld\n", p_rank, pr_part_no);
   par = (Particle*) malloc(sizeof(Particle) * pr_part_no);
   if(p_rank == 0){
     totalM = init_particles(seed,grid_sz,part_no,par, grid, par_block, n_pr);
   }else{
       par_buffer = (double*) malloc(sizeof(double)*PARBUFFER*5);
       while(1){
-          printf("Process: %d   aux_i: %lld\n", p_rank, aux_i);
           MPI_Recv(par_buffer, PARBUFFER*5, MPI_DOUBLE, 0, PARTAG, MPI_COMM_WORLD, &status);
           aux_i = fill_par_buffer(par_buffer, par, aux_i, pr_part_no, grid, grid_sz);
           if(aux_i == pr_part_no)
@@ -61,8 +58,7 @@ int main (int argc, char* argv[]) {
 
   MPI_Barrier (MPI_COMM_WORLD);
 
-
-
+  broadcast_mass(grid, p_rank, n_pr, grid_sz); //center.x && center.y = 0 here
   MPI_Barrier (MPI_COMM_WORLD);
 
   /* ciclo baseado no numero de steps */
@@ -80,6 +76,7 @@ int main (int argc, char* argv[]) {
 
     broadcast_mass(grid, p_rank, n_pr, grid_sz); //center.x && center.y = 0 here
     MPI_Barrier (MPI_COMM_WORLD);
+
   }
 
   broadcast_totalM(p_rank, n_pr, &totalM);
