@@ -56,7 +56,7 @@
 #include <mpi.h>
 #define BILLION 1E9
 #define min(a, b) (((a) < (b)) ? (a) : (b))
-
+#define max(a, b) (((a) > (b)) ? (a) : (b)) 
 typedef void * Item;
 
 

@@ -5,6 +5,32 @@
 #define G 6.67408e-11
 #define EPSLON 0.0005
 
+void divide_par(int n_pr, int part_no, int rem, int *par_block){
+  int i;
+
+  for(i=0; i<n_pr; i++){
+    par_block[i] = i* floor((double)part_no/(double)n_pr) + min(i, rem);
+  }
+
+  return;
+}
+
+int task_owner(int part_no, int n_pr, int rem, int par){
+  int i;
+  int owner;
+  int nmax1, nmax2;
+  int n;
+  double div;
+  div = (double)part_no/(double)n_pr;
+  n = ceil(div);
+  nmax1 = floor((double)par/(double)n);
+  nmax2 = floor((par-rem)/floor((double)part_no/(double)n_pr));
+
+  owner = max(nmax1, nmax2);
+
+  return owner;
+}
+
 //no init particles, arredondar o x e o y, e mete-lo logo na lista da celula certa e ir dando um +=  a uma variavel para termos
 //a soma de todas as massas no inicio sem complexidade extra de percorrer todas as listas de novo
 //Same para quando as particulas são movimentadas a cada iteração

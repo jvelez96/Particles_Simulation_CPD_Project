@@ -5,7 +5,7 @@
 int main (int argc, char* argv[]) {
   int i, j;
   int p_rank, n_pr;
-  int *cell_block;
+  int *par_block;
   int rem;
   int a;
   long seed, grid_sz, steps;
@@ -30,23 +30,10 @@ int main (int argc, char* argv[]) {
   part_no = atoi(argv[3]);
   steps = atoi(argv[4]);
 
-  cell_block = malloc(sizeof(int)* n_pr);
-  rem = grid_sz % n_pr;
+  par_block = malloc(sizeof(int)* n_pr);
+  rem = part_no % n_pr;
 
-  /*
-  void divide_cells(int n_pr, int grid_sz, int rem, int *cell_block){
-    int i;
-
-    for(i=0; i<n_pr; i++){
-      cell_block[i] = i* floor(grid_sz/n_pr) + min(i, rem);
-    }
-
-    return;
-  }
-
-
-  */
-  divide_cells(n_pr, grid_sz, rem, cell_block);
+  divide_par(n_pr, part_no, rem, par_block);
 
   /*
   printf("Seed nº: %ld\n", *seed);

@@ -1,6 +1,14 @@
 //grid.c
 #include "grid.h"
 
+int cell_id(int x, int y, int grid_sz){
+  int cell;
+
+  cell = (y*grid_sz + x);
+
+  return cell;
+}
+
 Grid **init_grid(long size){
     long i, j;
 

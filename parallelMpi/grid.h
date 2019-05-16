@@ -24,6 +24,7 @@ typedef struct GridStruct {
     double Mnext;
 } Grid;
 
+int cell_id(int x, int y, int grid_sz);
 Grid **init_grid(long size);
 void clear_grid(long size, Grid **grid);
 void swap_grid_Ms (long size, Grid **grid);
