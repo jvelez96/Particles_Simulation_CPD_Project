@@ -10,7 +10,7 @@ int main (int argc, char* argv[]) {
   int a;
   long seed, grid_sz, steps;
   long long part_no;
-  aux_i=0;
+  long long aux_i=0;
   double totalM;
   MPI_Status status;
   struct timespec requestStart, requestEnd, moveStart, moveEnd;
@@ -51,14 +51,21 @@ int main (int argc, char* argv[]) {
   //all the processes except the main one
   par_buffer = (double*) malloc(sizeof(double)*PARBUFFER*5);
   if(p_rank != 0){
-      MPI_Recv(par_buffer, PARBUFFER*5, MPI_DOUBLE, 0, PARTAG, MPI_COMM_WORLD, &status);
-      aux_i = fill_par_buffer(par_buffer, par, aux_i, pr_part_no, grid, grid_sz);
+      while(1){
+          MPI_Recv(par_buffer, PARBUFFER*5, MPI_DOUBLE, 0, PARTAG, MPI_COMM_WORLD, &status);
+          aux_i = fill_par_buffer(par_buffer, par, aux_i, pr_part_no, grid, grid_sz);
+          if(aux_i == pr_part_no)
+              break;
+      }
   }
 
   MPI_Barrier (MPI_COMM_WORLD);
+<<<<<<< HEAD:parallelMpi/main.c
 
 
   MPI_Barrier (MPI_COMM_WORLD);
+=======
+>>>>>>> ed712d7137b410582b4d8efd0a0398f657cc4f29:parallelMpi/simpar.c
   /* ciclo baseado no numero de steps */
   for(i=0; i<steps; i++){
     update_center_local(pr_part_no, grid_sz, grid, par);
