@@ -92,18 +92,6 @@ double init_particles(long seed, long ncside, long long n_part, Particle *par, G
 
       buf_counter = buf_counter +5;
 
-
-      if(buf_counter==PARBUFFER*5){
-        //send par_buffer
-        MPI_Send(par_buffer, PARBUFFER*5, MPI_DOUBLE, pr_counter, PARTAG, MPI_COMM_WORLD);
-
-        //clear par_buffer
-        for(j=0; j<buf_counter;j++){
-          par_buffer[j] = 0.0;
-        }
-        //cada maquina vai ter de adicionar a sua grid as particulas
-        buf_counter=0;
-      }
       //if its not the last process
       if(pr_counter!= n_pr -1){
         //if its not the last particle that the current process treats
@@ -130,6 +118,18 @@ double init_particles(long seed, long ncside, long long n_part, Particle *par, G
           par_buffer[j] = 0.0;
         }
         buf_counter =0;
+      }
+      //reached buffer max_length
+      if(buf_counter>=PARBUFFER*5){
+        //send par_buffer
+        MPI_Send(par_buffer, PARBUFFER*5, MPI_DOUBLE, pr_counter, PARTAG, MPI_COMM_WORLD);
+
+        //clear par_buffer
+        for(j=0; j<buf_counter;j++){
+          par_buffer[j] = 0.0;
+        }
+        //cada maquina vai ter de adicionar a sua grid as particulas
+        buf_counter=0;
       }
     }
   }
