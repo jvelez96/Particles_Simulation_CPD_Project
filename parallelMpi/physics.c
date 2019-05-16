@@ -94,7 +94,7 @@ double init_particles(long seed, long ncside, long long n_part, Particle *par, G
 
       //if its not the last process
       if(pr_counter!= n_pr -1){
-        //if its not the last particle that the current process treats
+        //if it is the last particle that the current process treats
         if((i+1) == par_block[pr_counter+1]){
           par_buffer[buf_counter]= -1;
           //send par_buffer
@@ -108,8 +108,9 @@ double init_particles(long seed, long ncside, long long n_part, Particle *par, G
           pr_counter++;
           buf_counter = 0;
         }
-      }else if((buf_counter != 0)&&(i==n_part-1)){
-        par_buffer[buf_counter]= -1;
+      }else if(i==n_part-1){ //if its the last particle send it
+        if(buf_counter < PARBUFFER*5)
+          par_buffer[buf_counter]= -1;
         //send par_buffer
         MPI_Send(par_buffer, PARBUFFER*5, MPI_DOUBLE, pr_counter, PARTAG, MPI_COMM_WORLD);
 
