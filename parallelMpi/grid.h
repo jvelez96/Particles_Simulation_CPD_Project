@@ -5,7 +5,9 @@
 #include <math.h>
 #include <omp.h>
 #include <time.h>
+#include <mpi.h>
 #define BILLION 1E9
+
 
 typedef struct VectorStruct {
     double x;

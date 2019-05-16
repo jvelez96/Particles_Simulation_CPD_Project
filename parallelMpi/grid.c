@@ -9,27 +9,6 @@ int cell_id(int x, int y, int grid_sz){
   return cell;
 }
 
-/*
-double *init_grid(long size){
-    long i, j;
-
-    double *grid = NULL;
-
-    grid =  (double*) malloc(sizeof(double) * size *4);
-
-    for(i=0;i<size*4;i+4){
-      //x
-      grid[i] = 0;
-      //y
-      grid[i+1] = 0;
-      //M
-      grid[i+2] = 0;
-      //Mnext
-      grid[i+3] = 0;
-    }
-    return grid;
-}*/
-
 Grid **init_grid(long size){
     long i, j;
 
@@ -44,7 +23,6 @@ Grid **init_grid(long size){
             grid[i][j].center.y = 0;
             grid[i][j].M = 0;
             grid[i][j].Mnext = 0;
-            grid[i][j].par_list = initLinkedList();
         }
     }
 
@@ -106,6 +84,73 @@ void overall_center(Particle *par, long long part_no, double totalM){
 
   //printf("Final Center of mass\nX: %.2f Y: %.2f\n", x, y);
   printf("%.2f %.2f\n", x, y);
+}
+
+void broadcast_mass_centers(Grid **grid, int p_rank, int n_pr, long grid_sz){
+    double buffers[n_pr][2*grid_sz*grid_sz];
+    int d;
+    long i, j, l = 0;
+    double new_x = 0, new_y = 0;
+
+
+    for(i = 0; i < grid_sz; i++){
+      for(j = 0; j < grid_sz; j++){
+         buffers[p_rank][2*l] = grid[i][j].center.x;
+         buffers[p_rank][(2*l)+1] = grid[i][j].center.y;
+         l++;
+      }
+    }
+
+    for(d = 0; d < n_pr; d++){
+        MPI_Bcast(buffers[d], 2*grid_sz*grid_sz, MPI_INT, d, MPI_COMM_WORLD);
+    }
+
+    l = 0;
+    for(i = 0; i < grid_sz; i++){
+      for(j = 0; j < grid_sz; j++){
+        for(d = 0; d < n_pr; d++){
+          new_x += buffers[d][2*l];
+          new_y += buffers[d][(2*l)+1];
+        }
+        grid[i][j].center.x = new_x;
+        grid[i][j].center.y = new_y;
+        grid[i][j].Mnext = 0;
+        new_x = 0;
+        new_y = 0;
+        l++;
+      }
+    }
+}
+
+void broadcast_mass(Grid **grid, int p_rank, int n_pr, long grid_sz){
+    double buffers[n_pr][grid_sz*grid_sz];
+    int d;
+    long i, j, l = 0;
+    double new_m = 0;
+
+
+    for(i = 0; i < grid_sz; i++){
+      for(j = 0; j < grid_sz; j++){
+         buffers[p_rank][l] = grid[i][j].Mnext;
+         l++;
+      }
+    }
+
+    for(d = 0; d < n_pr; d++){
+        MPI_Bcast(buffers[d], grid_sz*grid_sz, MPI_INT, d, MPI_COMM_WORLD);
+    }
+
+    l = 0;
+    for(i = 0; i < grid_sz; i++){
+      for(j = 0; j < grid_sz; j++){
+        for(d = 0; d < n_pr; d++){
+          new_m += buffers[d][l];
+        }
+        grid[i][j].M = new_m;
+        new_m = 0;
+        l++;
+      }
+    }
 }
 
 void free_all(Particle *par, Grid  **grid, long grid_sz){
