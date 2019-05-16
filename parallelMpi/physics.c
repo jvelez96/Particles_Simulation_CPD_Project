@@ -144,7 +144,7 @@ double init_particles(long seed, long ncside, long long n_part, Particle *par, G
   return totalM;
 }
 
-int fill_par_buffer(double *par_buffer, Particle *par, int aux_i, int pr_part_no){
+int fill_par_buffer(double *par_buffer, Particle *par, int aux_i, int pr_part_no, Grid **grid, int grid_sz){
   int i;
   int aux;
   int x,y;
@@ -160,10 +160,10 @@ int fill_par_buffer(double *par_buffer, Particle *par, int aux_i, int pr_part_no
       par[i].m = par_buffer[i*4 +4];
 
       //Insert in grid after creation
-      x = floor(par[i].pos.x * ncside);
+      x = floor(par[i].pos.x * grid_sz);
       if(x == ncside)
           x = ncside - 1;
-      y = floor(par[i].pos.y * ncside);
+      y = floor(par[i].pos.y * grid_sz);
       if(y == ncside)
           y = ncside - 1;
 

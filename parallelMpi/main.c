@@ -52,7 +52,7 @@ int main (int argc, char* argv[]) {
   par_buffer = (double*) malloc(sizeof(double)*PARBUFFER*5);
   if(p_rank != 0){
       MPI_Recv(par_buffer, PARBUFFER*5, MPI_DOUBLE, 0, PARTAG, MPI_COMM_WORLD, &status);
-      aux_i = fill_par_buffer(par_buffer, par, aux_i, pr_part_no);
+      aux_i = fill_par_buffer(par_buffer, par, aux_i, pr_part_no, grid, grid_sz);
   }
 
   MPI_Barrier (MPI_COMM_WORLD);
