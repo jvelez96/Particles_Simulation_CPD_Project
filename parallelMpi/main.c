@@ -12,6 +12,8 @@ int main (int argc, char* argv[]) {
   long long part_no;
   double totalM;
   MPI_Status status;
+  int pr_part_no;
+  int aux_i; //auxiliar variable for keeping the number of particles in the vector
   struct timespec requestStart, requestEnd, moveStart, moveEnd;
 
   MPI_Init (&argc, &argv);
@@ -48,9 +50,13 @@ int main (int argc, char* argv[]) {
 
   grid = init_grid(grid_sz);
 
-  par = (*) malloc(sizeof(Particle) * par_block[p_rank+1]);
+  pr_part_no = get_par_number(part_no, par_block, n_rank,n_pr)
+  par = (Particle*) malloc(sizeof(Particle) * pr_part_no);
   if(p_rank == 0)
     totalM = init_particles(seed,grid_sz,part_no,par, grid, par_block);
+
+  //recv
+  //aux_i = fill_par_buffer(par_buffer, par, aux_i, pr_part_no);
 
   clock_gettime(CLOCK_REALTIME, &requestStart);
   /* ciclo baseado no numero de steps */
