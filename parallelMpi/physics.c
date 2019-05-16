@@ -2,10 +2,6 @@
 #include "physics.h"
 
 #define RND0_1 ((double) random() / ((long long)1<<31))
-#define G 6.67408e-11
-#define EPSLON 0.0005
-#define PARBUFFER 20000
-#define PARTAG 123
 
 void divide_par(int n_pr, long long part_no, int rem, int *par_block){
   int i;
@@ -54,7 +50,7 @@ double init_particles(long seed, long ncside, long long n_part, Particle *par, G
   int j;
   int x, y;
   double totalM;
-  double *par_buffer;
+  double *par_buffer = NULL;
   int pr_counter=1, buf_counter=0;
   int status;
 
@@ -62,7 +58,6 @@ double init_particles(long seed, long ncside, long long n_part, Particle *par, G
   totalM = 0;
 
   par_buffer = (double*) malloc(sizeof(double)*PARBUFFER*5);
-
   for(i = 0; i < n_part; i++){
     if(i<par_block[1]){
       par[i].pos.x = RND0_1;
@@ -71,6 +66,7 @@ double init_particles(long seed, long ncside, long long n_part, Particle *par, G
       par[i].v.y = (RND0_1 / ncside / 10.0);
       par[i].m = (RND0_1 * ncside / (G * 1e6 * n_part));
       totalM += par[i].m;
+      printf("P: %lld   %f %f   %f %f   %f\n", i, par[i].pos.x, par[i].pos.y, par[i].v.x, par[i].v.y, par[i].m);
 
       //Insert in grid after creation
       x = floor(par[i].pos.x * ncside);
@@ -95,11 +91,14 @@ double init_particles(long seed, long ncside, long long n_part, Particle *par, G
 
       totalM += par_buffer[buf_counter+4];
 
+      printf("P: %lld   %f %f   %f %f   %f\n", i, par_buffer[buf_counter], par_buffer[buf_counter+1], par_buffer[buf_counter+2], par_buffer[buf_counter+3], par_buffer[buf_counter+4]);
+
       buf_counter = buf_counter +5;
+
 
       if(buf_counter==PARBUFFER*5){
         //send par_buffer
-        MPI_Send(par_buffer, PARBUFFER*5, MPI_DOUBLE, pr_counter, PARTAG, MPI_COMM_WORLD, &status);
+        MPI_Send(par_buffer, PARBUFFER*5, MPI_DOUBLE, pr_counter, PARTAG, MPI_COMM_WORLD);
 
         //clear par_buffer
         for(j=0; j<buf_counter;j++){
@@ -112,9 +111,9 @@ double init_particles(long seed, long ncside, long long n_part, Particle *par, G
       if(pr_counter!= n_pr -1){
         //if its not the last particle that the current process treats
         if((i+1) == par_block[pr_counter+1]){
-          par_buffer[buff_counter]= -1;
+          par_buffer[buf_counter]= -1;
           //send par_buffer
-          MPI_Send(par_buffer, PARBUFFER*5, MPI_DOUBLE, pr_counter, PARTAG, MPI_COMM_WORLD, &status);
+          MPI_Send(par_buffer, PARBUFFER*5, MPI_DOUBLE, pr_counter, PARTAG, MPI_COMM_WORLD);
 
           //clear par_buffer
           for(j=0; j<buf_counter+1;j++){
@@ -125,9 +124,9 @@ double init_particles(long seed, long ncside, long long n_part, Particle *par, G
           buf_counter = 0;
         }
       }else if((buf_counter != 0)&&(i==n_part-1)){
-        par_buffer[buff_counter]= -1;
+        par_buffer[buf_counter]= -1;
         //send par_buffer
-        MPI_Send(par_buffer, PARBUFFER*5, MPI_DOUBLE, pr_counter, PARTAG, MPI_COMM_WORLD, &status);
+        MPI_Send(par_buffer, PARBUFFER*5, MPI_DOUBLE, pr_counter, PARTAG, MPI_COMM_WORLD);
 
         //clear par_buffer
         for(j=0; j<buf_counter+1;j++){
@@ -149,6 +148,7 @@ long long fill_par_buffer(double *par_buffer, Particle *par, long long aux_i, lo
     if(par_buffer[i*4] == -1){
       break;
     }else{
+      printf("Cona");
       par[i].pos.x = par_buffer[i*4];
       par[i].pos.y = par_buffer[i*4 +1];
       par[i].v.x = par_buffer[i*4 +2];
@@ -157,11 +157,11 @@ long long fill_par_buffer(double *par_buffer, Particle *par, long long aux_i, lo
 
       //Insert in grid after creation
       x = floor(par[i].pos.x * grid_sz);
-      if(x == ncside)
-          x = ncside - 1;
+      if(x == grid_sz)
+          x = grid_sz - 1;
       y = floor(par[i].pos.y * grid_sz);
-      if(y == ncside)
-          y = ncside - 1;
+      if(y == grid_sz)
+          y = grid_sz - 1;
 
       grid[x][y].M += par[i].m;
     }
@@ -175,7 +175,7 @@ double get_distance(Vector a, Vector b){
   double dy = abs(b.y - a.y);
 
   return sqrt(dx*dx + dy*dy);
-
+}
 
 //Determines force suffered by 1 particle from a single cell
 Vector get_force(Particle par, Grid grid, int add_x, int add_y){ //No pointer has been passed, can we manipulate this objects and don't affect main???

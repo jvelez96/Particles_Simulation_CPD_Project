@@ -1,7 +1,6 @@
 //main.c
 #include "physics.h"
 
-
 int main (int argc, char* argv[]) {
   int i, j;
   int p_rank, n_pr;
@@ -9,11 +8,12 @@ int main (int argc, char* argv[]) {
   int rem;
   int a;
   long seed, grid_sz, steps;
-  long long part_no;
+  long long part_no, pr_part_no;
   long long aux_i=0;
   double totalM;
   MPI_Status status;
   struct timespec requestStart, requestEnd, moveStart, moveEnd;
+  double *par_buffer = NULL;
 
   MPI_Init (&argc, &argv);
 
@@ -43,15 +43,15 @@ int main (int argc, char* argv[]) {
 
   grid = init_grid(grid_sz);
 
-  pr_part_no = get_par_number(part_no, par_block, n_rank,n_pr)
+  pr_part_no = get_par_number(part_no, par_block, p_rank,n_pr);
+  printf("Process: %d   part: %lld\n", p_rank, pr_part_no);
   par = (Particle*) malloc(sizeof(Particle) * pr_part_no);
-  if(p_rank == 0)
-    totalM = init_particles(seed,grid_sz,part_no,par, grid, par_block);
-
-  //all the processes except the main one
-  par_buffer = (double*) malloc(sizeof(double)*PARBUFFER*5);
-  if(p_rank != 0){
+  if(p_rank == 0){
+    totalM = init_particles(seed,grid_sz,part_no,par, grid, par_block, n_pr);
+  }else{
+      par_buffer = (double*) malloc(sizeof(double)*PARBUFFER*5);
       while(1){
+          printf("Process: %d   aux_i: %lld\n", p_rank, aux_i);
           MPI_Recv(par_buffer, PARBUFFER*5, MPI_DOUBLE, 0, PARTAG, MPI_COMM_WORLD, &status);
           aux_i = fill_par_buffer(par_buffer, par, aux_i, pr_part_no, grid, grid_sz);
           if(aux_i == pr_part_no)
@@ -84,7 +84,7 @@ int main (int argc, char* argv[]) {
   MPI_Barrier (MPI_COMM_WORLD);
 
   double x, y;
-  broadcast_overall_center(grid, p_rank, n_pr, grid_sz, &x, &y);
+  broadcast_overall_center(grid, p_rank, n_pr, &x, &y);
   MPI_Barrier (MPI_COMM_WORLD);
 
   if(p_rank == 0){

@@ -156,8 +156,8 @@ void broadcast_mass(Grid **grid, int p_rank, int n_pr, long grid_sz){
 void broadcast_overall_center(Grid **grid, int p_rank, int n_pr, double *x, double *y){
     double buffers[n_pr][2];
     int d;
-    x = 0;
-    y = 0;
+    *x = 0;
+    *y = 0;
 
     buffers[p_rank][0] = grid[0][0].center.x;
     buffers[p_rank][1] = grid[0][0].center.y;
@@ -167,20 +167,20 @@ void broadcast_overall_center(Grid **grid, int p_rank, int n_pr, double *x, doub
 
 
     for(d = 0; d < n_pr; d++){
-        x += buffers[d][0];
-        y += buffers[d][1];
+        *x += buffers[d][0];
+        *y += buffers[d][1];
     }
 }
 
 void broadcast_totalM(int p_rank, int n_pr, double *totalM){
-    double buffer;
+    double buffer[1];
 
     if(!p_rank){
-        buffer = totalM;
+        buffer[0] = *totalM;
         MPI_Bcast(buffer, 1, MPI_DOUBLE, 0, MPI_COMM_WORLD);
     } else{
         MPI_Bcast(buffer, 1, MPI_DOUBLE, 0, MPI_COMM_WORLD);
-        totalM = buffer;
+        *totalM = buffer[0];
     }
 }
 
