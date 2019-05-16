@@ -12,7 +12,7 @@ int main (int argc, char* argv[]) {
   long long part_no;
   double totalM;
   MPI_Status status;
-  int pr_part_no;
+  long long pr_part_no;
   int aux_i; //auxiliar variable for keeping the number of particles in the vector
   struct timespec requestStart, requestEnd, moveStart, moveEnd;
 
@@ -37,12 +37,6 @@ int main (int argc, char* argv[]) {
 
   divide_par(n_pr, part_no, rem, par_block);
 
-  /*
-  printf("Seed nº: %ld\n", *seed);
-  printf("Grid size: %ld\n", grid_sz);
-  printf("Nº of particles: %lld\n", part_no);
-  printf("Nº of steps: %ld\n", steps);*/
-
   //Start both structures
 
   Grid **grid = NULL;
@@ -58,34 +52,42 @@ int main (int argc, char* argv[]) {
   //recv
   //aux_i = fill_par_buffer(par_buffer, par, aux_i, pr_part_no);
 
-  clock_gettime(CLOCK_REALTIME, &requestStart);
+  MPI_Barrier (MPI_COMM_WORLD);
   /* ciclo baseado no numero de steps */
   for(i=0; i<steps; i++){
-    update_center_all(part_no, grid_sz, grid, par);
-    clear_grid(grid_sz, grid);
+    update_center_local(pr_part_no, grid_sz, grid, par);
+    MPI_Barrier (MPI_COMM_WORLD);
 
-    #pragma omp parallel
-        {
-          /* 2.1. PROCESS ELEMENTS */
-          #pragma omp for private (j)
-          for(j=0; j<part_no; j++){
-              move_particle(grid_sz, &par[j], grid, j);
-          }
-        }
-    swap_grid_Ms(grid_sz, grid);
+    broadcast_mass_centers(grid, p_rank, n_pr, grid_sz); //Mnext = 0 here
+    MPI_Barrier (MPI_COMM_WORLD);
+
+    for(j=0; j<pr_part_no; j++){
+        move_particle(grid_sz, &par[j], grid, j);
+    }
+    MPI_Barrier (MPI_COMM_WORLD);
+
+    broadcast_mass(grid, p_rank, n_pr, grid_sz); //center.x && center.y = 0 here
+    MPI_Barrier (MPI_COMM_WORLD);
+  }
+  
+  broadcast_totalM(p_rank, n_pr, &totalM);
+  MPI_Barrier (MPI_COMM_WORLD);
+
+  overall_center_local(par, grid, pr_part_no, totalM);
+  MPI_Barrier (MPI_COMM_WORLD);
+
+  double x, y;
+  broadcast_overall_center(grid, p_rank, n_pr, grid_sz, &x, &y);
+  MPI_Barrier (MPI_COMM_WORLD);
+
+  if(p_rank == 0){
+    printf("%.2f %.2f\n", par[0].pos.x, par[0].pos.y);
+    printf("%.2f %.2f\n", x, y);
   }
 
-  printf("%.2f %.2f\n", par[0].pos.x, par[0].pos.y);
-  overall_center(par, part_no, totalM);
   free_all(par, grid, grid_sz); //Frees all memory
 
-  clock_gettime(CLOCK_REALTIME, &requestEnd);
-  // Calculate time it took
-  double accum = ( requestEnd.tv_sec - requestStart.tv_sec )
-    + ( requestEnd.tv_nsec - requestStart.tv_nsec )
-    / BILLION;
-  printf( "It took: %lfs\n", accum);
+
   MPI_Finalize();
   return 0;
-
 }

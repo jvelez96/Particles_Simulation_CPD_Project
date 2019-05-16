@@ -50,7 +50,7 @@ void swap_grid_Ms (long size, Grid **grid){
 }
 
 /* Função para fazer o update geral de todos os centros de massa*/
-void update_center_all (long long part_no, long size, Grid **grid, Particle *par){
+void update_center_local (long long part_no, long size, Grid **grid, Particle *par){
   long long i;
   int Gx, Gy;
   double new_x, new_y;
@@ -72,8 +72,8 @@ void update_center_all (long long part_no, long size, Grid **grid, Particle *par
 }
 
 
-/* Function to calculate overall center of mass and print it*/
-void overall_center(Particle *par, long long part_no, double totalM){
+/* Function to calculate local overall center of mass and saves it in grid[0][0] position*/
+void overall_center_local(Particle *par, Grid **grid, long long part_no, double totalM){
   long long i;
   double x=0, y=0;
 
@@ -82,8 +82,8 @@ void overall_center(Particle *par, long long part_no, double totalM){
     y += (par[i].pos.y * par[i].m)/totalM;
   }
 
-  //printf("Final Center of mass\nX: %.2f Y: %.2f\n", x, y);
-  printf("%.2f %.2f\n", x, y);
+  grid[0][0].center.x = x;
+  grid[0][0].center.y = y;
 }
 
 void broadcast_mass_centers(Grid **grid, int p_rank, int n_pr, long grid_sz){
@@ -101,9 +101,8 @@ void broadcast_mass_centers(Grid **grid, int p_rank, int n_pr, long grid_sz){
       }
     }
 
-    for(d = 0; d < n_pr; d++){
+    for(d = 0; d < n_pr; d++)
         MPI_Bcast(buffers[d], 2*grid_sz*grid_sz, MPI_INT, d, MPI_COMM_WORLD);
-    }
 
     l = 0;
     for(i = 0; i < grid_sz; i++){
@@ -136,20 +135,52 @@ void broadcast_mass(Grid **grid, int p_rank, int n_pr, long grid_sz){
       }
     }
 
-    for(d = 0; d < n_pr; d++){
-        MPI_Bcast(buffers[d], grid_sz*grid_sz, MPI_INT, d, MPI_COMM_WORLD);
-    }
+    for(d = 0; d < n_pr; d++)
+        MPI_Bcast(buffers[d], grid_sz*grid_sz, MPI_DOUBLE, d, MPI_COMM_WORLD);
 
     l = 0;
     for(i = 0; i < grid_sz; i++){
       for(j = 0; j < grid_sz; j++){
-        for(d = 0; d < n_pr; d++){
+        for(d = 0; d < n_pr; d++)
           new_m += buffers[d][l];
-        }
+
         grid[i][j].M = new_m;
+        grid[i][j].center.x = 0;
+        grid[i][j].center.y = 0;
         new_m = 0;
         l++;
       }
+    }
+}
+
+void broadcast_overall_center(Grid **grid, int p_rank, int n_pr, double *x, double *y){
+    double buffers[n_pr][2];
+    int d;
+    x = 0;
+    y = 0;
+
+    buffers[p_rank][0] = grid[0][0].center.x;
+    buffers[p_rank][1] = grid[0][0].center.y;
+
+    for(d = 0; d < n_pr; d++)
+        MPI_Bcast(buffers[d], 2, MPI_DOUBLE, d, MPI_COMM_WORLD);
+
+
+    for(d = 0; d < n_pr; d++){
+        x += buffers[d][0];
+        y += buffers[d][1];
+    }
+}
+
+void broadcast_totalM(int p_rank, int n_pr, double *totalM){
+    double buffer;
+
+    if(!p_rank){
+        buffer = totalM;
+        MPI_Bcast(buffer, 1, MPI_DOUBLE, 0, MPI_COMM_WORLD);
+    } else{
+        MPI_Bcast(buffer, 1, MPI_DOUBLE, 0, MPI_COMM_WORLD);
+        totalM = buffer;
     }
 }
 
