@@ -107,11 +107,12 @@ double init_particles(long seed, long ncside, long long n_part, Particle *par, G
       }
       //if its not the last process
       if(pr_counter!= n_pr -1){
+        //if its not the last particle that the current process treats
         if((i+1) == par_block[pr_counter+1]){
           par_buffer[buff_counter]= -1;
           //send par_buffer
           //clear par_buffer
-          for(j=0; j<buf_counter;j++){
+          for(j=0; j<buf_counter+1;j++){
             par_buffer[j] = 0.0;
           }
 
@@ -119,10 +120,9 @@ double init_particles(long seed, long ncside, long long n_part, Particle *par, G
           buf_counter = 0;
         }
       }else if((buf_counter != 0)&&(i==n_part-1)){
-        //ver esta verificacao que nao esta bem
         par_buffer[buff_counter]= -1;
         //send par_buffer
-        for(j=0; j<buf_counter;j++){
+        for(j=0; j<buf_counter+1;j++){
           par_buffer[j] = 0.0;
         }
         buf_counter =0;
@@ -132,10 +132,23 @@ double init_particles(long seed, long ncside, long long n_part, Particle *par, G
   return totalM;
 }
 
-void fill_par_buffer(double *par_buffer, int npar, Particle *par, int aux_i){
+int fill_par_buffer(double *par_buffer, Particle *par, int aux_i, int pr_part_no){
   int i;
+  int aux;
 
-  for(i=aux_i; i<)
+  for(i=aux_i; i<pr_part_no; i++){
+    if(par_buffer[i*4] == -1){
+      break;
+    }else{
+      par[i].pos.x = par_buffer[i*4];
+      par[i].pos.y = par_buffer[i*4 +1];
+      par[i].v.x = par_buffer[i*4 +2];
+      par[i].v.y = par_buffer[i*4 +3];
+      par[i].m = par_buffer[i*4 +4];
+    }
+  }
+  aux = i;
+  return aux;
 }
 
 double get_distance(Vector a, Vector b){
@@ -143,7 +156,7 @@ double get_distance(Vector a, Vector b){
   double dy = abs(b.y - a.y);
 
   return sqrt(dx*dx + dy*dy);
-}
+
 
 //Determines force suffered by 1 particle from a single cell
 Vector get_force(Particle par, Grid grid, int add_x, int add_y){ //No pointer has been passed, can we manipulate this objects and don't affect main???
