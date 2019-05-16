@@ -44,7 +44,6 @@ Grid **init_grid(long size){
             grid[i][j].center.y = 0;
             grid[i][j].M = 0;
             grid[i][j].Mnext = 0;
-            grid[i][j].par_list = initLinkedList();
         }
     }
 

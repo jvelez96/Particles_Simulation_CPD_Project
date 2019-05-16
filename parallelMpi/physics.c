@@ -19,12 +19,16 @@ void divide_par(int n_pr, int part_no, int rem, int *par_block){
 int get_par_number(int part_no, int *par_block, int n_rank, int n_pr){
   int par_number;
 
-  
-
-  par_number =
+  if(n_rank != n_pr-1){
+    par_number = par_block[n_rank+1] - par_block[n_rank];
+  }else{
+    par_number = part_no - par_block[n_rank];
+  }
 
   return par_number;
 }
+
+int
 
 int task_owner(int part_no, int n_pr, int rem, int par){
   int i;
@@ -45,7 +49,7 @@ int task_owner(int part_no, int n_pr, int rem, int par){
 //no init particles, arredondar o x e o y, e mete-lo logo na lista da celula certa e ir dando um +=  a uma variavel para termos
 //a soma de todas as massas no inicio sem complexidade extra de percorrer todas as listas de novo
 //Same para quando as particulas são movimentadas a cada iteração
-double init_particles(long seed, long ncside, long long n_part, Particle *par, Grid **grid, int *par_block){
+double init_particles(long seed, long ncside, long long n_part, Particle *par, Grid **grid, int *par_block, int n_pr){
   long long i;
   int j;
   int x, y;
@@ -101,23 +105,38 @@ double init_particles(long seed, long ncside, long long n_part, Particle *par, G
         //cada maquina vai ter de adicionar a sua grid as particulas
         buf_counter=0;
       }
+      //if its not the last process
+      if(pr_counter!= n_pr -1){
+        if((i+1) == par_block[pr_counter+1]){
+          par_buffer[buff_counter]= -1;
+          //send par_buffer
+          //clear par_buffer
+          for(j=0; j<buf_counter;j++){
+            par_buffer[j] = 0.0;
+          }
 
-      if((i+1) == par_block[pr_counter+1]){
+          pr_counter++;
+          buf_counter = 0;
+        }
+      }else if((buf_counter != 0)&&(i==n_part-1)){
+        //ver esta verificacao que nao esta bem
+        par_buffer[buff_counter]= -1;
         //send par_buffer
-        //clear par_buffer
         for(j=0; j<buf_counter;j++){
           par_buffer[j] = 0.0;
         }
-
-        pr_counter++;
-        buf_counter = 0;
+        buf_counter =0;
       }
     }
   }
   return totalM;
 }
 
-void create_par_buffer(double *par_buffer, int npar, Particle *par, )
+void fill_par_buffer(double *par_buffer, int npar, Particle *par, int aux_i){
+  int i;
+
+  for(i=aux_i; i<)
+}
 
 double get_distance(Vector a, Vector b){
   double dx = abs(b.x - a.x);
