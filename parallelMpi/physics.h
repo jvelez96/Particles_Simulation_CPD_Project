@@ -1,6 +1,11 @@
 // physics.h
 #include "grid.h"
 
+#define G 6.67408e-11
+#define EPSLON 0.0005
+#define PARBUFFER 20000
+#define PARTAG 123
+
 void divide_par(int n_pr, long long part_no, int rem, int *par_block);
 long long get_par_number(long long part_no, int *par_block, int n_rank, int n_pr);
 int task_owner(int part_no, int n_pr, int rem, int par);
