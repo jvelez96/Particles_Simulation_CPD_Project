@@ -5,6 +5,7 @@
 #define G 6.67408e-11
 #define EPSLON 0.0005
 #define PARBUFFER 20000
+#define PARTAG 123
 
 void divide_par(int n_pr, int part_no, int rem, int *par_block){
   int i;
@@ -56,6 +57,7 @@ double init_particles(long seed, long ncside, long long n_part, Particle *par, G
   double totalM;
   double *par_buffer;
   int pr_counter=1, buf_counter=0;
+  int status;
 
   srandom(seed);
   totalM = 0;
@@ -98,6 +100,10 @@ double init_particles(long seed, long ncside, long long n_part, Particle *par, G
 
       if(buf_counter==PARBUFFER*5){
         //send par_buffer
+        for(j=1;j<n_pr;j++){
+          MPI_Send(par_buffer, PARBUFFER*5, MPI_DOUBLE, j, PARTAG, MPI_COMM_WORLD, &status);
+        }
+
         //clear par_buffer
         for(j=0; j<buf_counter;j++){
           par_buffer[j] = 0.0;
@@ -111,6 +117,9 @@ double init_particles(long seed, long ncside, long long n_part, Particle *par, G
         if((i+1) == par_block[pr_counter+1]){
           par_buffer[buff_counter]= -1;
           //send par_buffer
+          for(j=1;j<n_pr;j++){
+            MPI_Send(par_buffer, PARBUFFER*5, MPI_DOUBLE, j, PARTAG, MPI_COMM_WORLD, &status);
+          }
           //clear par_buffer
           for(j=0; j<buf_counter+1;j++){
             par_buffer[j] = 0.0;
@@ -122,6 +131,10 @@ double init_particles(long seed, long ncside, long long n_part, Particle *par, G
       }else if((buf_counter != 0)&&(i==n_part-1)){
         par_buffer[buff_counter]= -1;
         //send par_buffer
+        for(j=1;j<n_pr;j++){
+          MPI_Send(par_buffer, PARBUFFER*5, MPI_DOUBLE, j, PARTAG, MPI_COMM_WORLD, &status);
+        }
+        //clear par_buffer
         for(j=0; j<buf_counter+1;j++){
           par_buffer[j] = 0.0;
         }
@@ -135,6 +148,7 @@ double init_particles(long seed, long ncside, long long n_part, Particle *par, G
 int fill_par_buffer(double *par_buffer, Particle *par, int aux_i, int pr_part_no){
   int i;
   int aux;
+  int x,y;
 
   for(i=aux_i; i<pr_part_no; i++){
     if(par_buffer[i*4] == -1){
@@ -145,6 +159,16 @@ int fill_par_buffer(double *par_buffer, Particle *par, int aux_i, int pr_part_no
       par[i].v.x = par_buffer[i*4 +2];
       par[i].v.y = par_buffer[i*4 +3];
       par[i].m = par_buffer[i*4 +4];
+
+      //Insert in grid after creation
+      x = floor(par[i].pos.x * ncside);
+      if(x == ncside)
+          x = ncside - 1;
+      y = floor(par[i].pos.y * ncside);
+      if(y == ncside)
+          y = ncside - 1;
+
+      grid[x][y].M += par[i].m;
     }
   }
   aux = i;
