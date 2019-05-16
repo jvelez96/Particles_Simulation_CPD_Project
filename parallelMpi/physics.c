@@ -16,6 +16,16 @@ void divide_par(int n_pr, int part_no, int rem, int *par_block){
   return;
 }
 
+int get_par_number(int part_no, int *par_block, int n_rank, int n_pr){
+  int par_number;
+
+  
+
+  par_number =
+
+  return par_number;
+}
+
 int task_owner(int part_no, int n_pr, int rem, int par){
   int i;
   int owner;
@@ -107,7 +117,7 @@ double init_particles(long seed, long ncside, long long n_part, Particle *par, G
   return totalM;
 }
 
-void create_par_buffer()
+void create_par_buffer(double *par_buffer, int npar, Particle *par, )
 
 double get_distance(Vector a, Vector b){
   double dx = abs(b.x - a.x);

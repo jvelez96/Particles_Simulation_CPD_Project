@@ -48,7 +48,7 @@ int main (int argc, char* argv[]) {
 
   grid = init_grid(grid_sz);
 
-  par = (*) malloc(sizeof(Particle) * part_no);
+  par = (*) malloc(sizeof(Particle) * par_block[p_rank+1]);
   if(p_rank == 0)
     totalM = init_particles(seed,grid_sz,part_no,par, grid, par_block);
 
