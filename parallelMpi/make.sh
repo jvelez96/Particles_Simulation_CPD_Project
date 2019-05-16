@@ -1,1 +1,1 @@
-gcc main.c grid.c physics.c LinkedList.c -fopenmp -lm -o simpar
+mpicc -g simpar.c grid.c physics.c -lm -o simpar
