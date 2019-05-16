@@ -42,12 +42,15 @@ int main (int argc, char* argv[]) {
   printf("Nº of steps: %ld\n", steps);*/
 
   //Start both structures
+
   Grid **grid = NULL;
   Particle *par = NULL;
 
   grid = init_grid(grid_sz);
-  par = (Particle*) malloc(sizeof(Particle) * part_no);
-  totalM = init_particles(seed,grid_sz,part_no,par, grid);
+
+  par = (*) malloc(sizeof(Particle) * part_no);
+  if(p_rank == 0)
+    totalM = init_particles(seed,grid_sz,part_no,par, grid, par_block);
 
   clock_gettime(CLOCK_REALTIME, &requestStart);
   /* ciclo baseado no numero de steps */

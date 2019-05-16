@@ -9,6 +9,27 @@ int cell_id(int x, int y, int grid_sz){
   return cell;
 }
 
+/*
+double *init_grid(long size){
+    long i, j;
+
+    double *grid = NULL;
+
+    grid =  (double*) malloc(sizeof(double) * size *4);
+
+    for(i=0;i<size*4;i+4){
+      //x
+      grid[i] = 0;
+      //y
+      grid[i+1] = 0;
+      //M
+      grid[i+2] = 0;
+      //Mnext
+      grid[i+3] = 0;
+    }
+    return grid;
+}*/
+
 Grid **init_grid(long size){
     long i, j;
 
@@ -23,6 +44,7 @@ Grid **init_grid(long size){
             grid[i][j].center.y = 0;
             grid[i][j].M = 0;
             grid[i][j].Mnext = 0;
+            grid[i][j].par_list = initLinkedList();
         }
     }
 

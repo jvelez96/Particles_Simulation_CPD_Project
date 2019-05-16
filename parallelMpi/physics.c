@@ -4,6 +4,7 @@
 #define RND0_1 ((double) random() / ((long long)1<<31))
 #define G 6.67408e-11
 #define EPSLON 0.0005
+#define PARBUFFER 20000
 
 void divide_par(int n_pr, int part_no, int rem, int *par_block){
   int i;
@@ -34,35 +35,79 @@ int task_owner(int part_no, int n_pr, int rem, int par){
 //no init particles, arredondar o x e o y, e mete-lo logo na lista da celula certa e ir dando um +=  a uma variavel para termos
 //a soma de todas as massas no inicio sem complexidade extra de percorrer todas as listas de novo
 //Same para quando as particulas são movimentadas a cada iteração
-double init_particles(long seed, long ncside, long long n_part, Particle *par, Grid **grid){
+double init_particles(long seed, long ncside, long long n_part, Particle *par, Grid **grid, int *par_block){
   long long i;
+  int j;
   int x, y;
   double totalM;
+  double *par_buffer;
+  int pr_counter=1, buf_counter=0;
 
   srandom(seed);
   totalM = 0;
 
+  par_buffer = (double*) malloc(sizeof(double)*PARBUFFER*5);
+
   for(i = 0; i < n_part; i++){
-    par[i].pos.x = RND0_1;
-    par[i].pos.y = RND0_1;
-    par[i].v.x = (RND0_1 / ncside / 10.0);
-    par[i].v.y = (RND0_1 / ncside / 10.0);
-    par[i].m = (RND0_1 * ncside / (G * 1e6 * n_part));
-    totalM += par[i].m;
+    if(i<par_block[1]){
+      par[i].pos.x = RND0_1;
+      par[i].pos.y = RND0_1;
+      par[i].v.x = (RND0_1 / ncside / 10.0);
+      par[i].v.y = (RND0_1 / ncside / 10.0);
+      par[i].m = (RND0_1 * ncside / (G * 1e6 * n_part));
+      totalM += par[i].m;
 
-    //Insert in grid after creation
-    x = floor(par[i].pos.x * ncside);
-    if(x == ncside)
-        x = ncside - 1;
-    y = floor(par[i].pos.y * ncside);
-    if(y == ncside)
-        y = ncside - 1;
+      //Insert in grid after creation
+      x = floor(par[i].pos.x * ncside);
+      if(x == ncside)
+          x = ncside - 1;
+      y = floor(par[i].pos.y * ncside);
+      if(y == ncside)
+          y = ncside - 1;
 
-    grid[x][y].M += par[i].m;
+      grid[x][y].M += par[i].m;
+    }else{
+      //x
+      par_buffer[buf_counter] = RND0_1;
+      //y
+      par_buffer[buf_counter+1] = RND0_1;
+      //vx
+      par_buffer[buf_counter+2] = (RND0_1 / ncside / 10.0);
+      //vy
+      par_buffer[buf_counter+3] = (RND0_1 / ncside / 10.0);
+      //m
+      par_buffer[buf_counter+4] = (RND0_1 * ncside / (G * 1e6 * n_part));
 
+      totalM += par_buffer[buf_counter+4];
+
+      buf_counter = buf_counter +5;
+
+      if(buf_counter==PARBUFFER*5){
+        //send par_buffer
+        //clear par_buffer
+        for(j=0; j<buf_counter;j++){
+          par_buffer[j] = 0.0;
+        }
+        //cada maquina vai ter de adicionar a sua grid as particulas
+        buf_counter=0;
+      }
+
+      if((i+1) == par_block[pr_counter+1]){
+        //send par_buffer
+        //clear par_buffer
+        for(j=0; j<buf_counter;j++){
+          par_buffer[j] = 0.0;
+        }
+
+        pr_counter++;
+        buf_counter = 0;
+      }
+    }
   }
   return totalM;
 }
+
+void create_par_buffer()
 
 double get_distance(Vector a, Vector b){
   double dx = abs(b.x - a.x);
