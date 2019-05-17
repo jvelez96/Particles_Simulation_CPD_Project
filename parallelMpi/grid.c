@@ -33,10 +33,10 @@ void update_center_local (long long part_no, long size, Grid **grid, Particle *p
     for(i=0;i<part_no;i++){
       Gx = floor(par[i].pos.x * size);
       if(Gx == size)
-      Gx = size - 1;
+        Gx = size - 1;
       Gy = floor(par[i].pos.y * size);
       if(Gy == size)
-      Gy = size - 1;
+        Gy = size - 1;
 
 
       new_x = (par[i].pos.x * par[i].m)/grid[Gx][Gy].M;
@@ -71,28 +71,51 @@ void overall_center_local(Particle *par, Grid **grid, long long part_no, double 
 }
 
 void broadcast_mass_centers(Grid **grid, int p_rank, int n_pr, long grid_sz){
-    double buffers[n_pr][2*grid_sz*grid_sz];
+    //double buffers[n_pr][2*grid_sz*grid_sz];
+    double ***buffers = NULL;
     int d;
     long i, j, l = 0;
     double new_x = 0, new_y = 0;
+    int n_buffers, curr_buffer = 0;
+
+    n_buffers = ceil((2*grid_sz*grid_sz)/(GRIDBUFFER));
+    //double buffers[n_pr][n_buffers][GRIDBUFFER];
+
+    buffers = (double***) malloc(sizeof(double**) * n_pr);
+    for(i = 0; i < n_pr; i++){
+      buffers[i] = (double**) malloc(sizeof(double*) * n_buffers);
+      for(j=0; j<n_buffers; j++)
+          buffers[i][j] = (double*) malloc(sizeof(double) * GRIDBUFFER);
+    }
+
 
     for(i = 0; i < grid_sz; i++){
       for(j = 0; j < grid_sz; j++){
-         buffers[p_rank][2*l] = grid[i][j].center.x;
-         buffers[p_rank][(2*l)+1] = grid[i][j].center.y;
+         if(l == GRIDBUFFER/2){
+           curr_buffer++;
+           l = 0;
+         }
+         buffers[p_rank][curr_buffer][2*l] = grid[i][j].center.x;
+         buffers[p_rank][curr_buffer][(2*l)+1] = grid[i][j].center.y;
          l++;
       }
     }
 
-    for(d = 0; d < n_pr; d++)
-      MPI_Bcast(buffers[d], 2*grid_sz*grid_sz, MPI_DOUBLE, d, MPI_COMM_WORLD);
+    for(curr_buffer = 0; curr_buffer < n_buffers; curr_buffer++)
+      for(d = 0; d < n_pr; d++)
+        MPI_Bcast(buffers[d][curr_buffer], GRIDBUFFER, MPI_DOUBLE, d, MPI_COMM_WORLD);
 
     l = 0;
+    curr_buffer = 0;
     for(i = 0; i < grid_sz; i++){
       for(j = 0; j < grid_sz; j++){
+        if(l == GRIDBUFFER/2){
+          curr_buffer++;
+          l = 0;
+        }
         for(d = 0; d < n_pr; d++){
-          new_x += buffers[d][2*l];
-          new_y += buffers[d][(2*l)+1];
+          new_x += buffers[d][curr_buffer][2*l];
+          new_y += buffers[d][curr_buffer][(2*l)+1];
         }
         grid[i][j].center.x = new_x;
         grid[i][j].center.y = new_y;
@@ -102,30 +125,59 @@ void broadcast_mass_centers(Grid **grid, int p_rank, int n_pr, long grid_sz){
         l++;
       }
     }
+
+    for(i = 0; i < n_pr; i++){
+      for(j=0; j < n_buffers; j++){
+        free(buffers[i][j]);
+      }
+      free(buffers[i]);
+    }
+    free(buffers);
 }
 
 void broadcast_mass(Grid **grid, int p_rank, int n_pr, long grid_sz){
-    double buffers[n_pr][grid_sz*grid_sz];
+    //double buffers[n_pr][grid_sz*grid_sz];
+    double ***buffers = NULL;
     int d;
-    long i, j, l = 0;
+    long i, j, k, l = 0;
     double new_m = 0;
+    int n_buffers, curr_buffer = 0;
 
+    n_buffers = ceil((grid_sz*grid_sz)/GRIDBUFFER);
+    //double buffers[n_pr][n_buffers][GRIDBUFFER];
+
+    buffers = (double***) malloc(sizeof(double**) * n_pr);
+    for(i = 0; i < n_pr; i++){
+      buffers[i] = (double**) malloc(sizeof(double*) * n_buffers);
+      for(j=0; j<n_buffers; j++)
+          buffers[i][j] = (double*) malloc(sizeof(double) * GRIDBUFFER);
+    }
 
     for(i = 0; i < grid_sz; i++){
       for(j = 0; j < grid_sz; j++){
-         buffers[p_rank][l] = grid[i][j].Mnext;
+         if(l == GRIDBUFFER){
+           curr_buffer++;
+           l = 0;
+         }
+         buffers[p_rank][curr_buffer][l] = grid[i][j].Mnext;
          l++;
       }
     }
 
-    for(d = 0; d < n_pr; d++)
-        MPI_Bcast(buffers[d], grid_sz*grid_sz, MPI_DOUBLE, d, MPI_COMM_WORLD);
+    for(curr_buffer = 0; curr_buffer < n_buffers; curr_buffer++)
+      for(d = 0; d < n_pr; d++)
+        MPI_Bcast(buffers[d][curr_buffer], GRIDBUFFER, MPI_DOUBLE, d, MPI_COMM_WORLD);
 
     l = 0;
+    curr_buffer = 0;
     for(i = 0; i < grid_sz; i++){
       for(j = 0; j < grid_sz; j++){
+        if(l == GRIDBUFFER){
+          curr_buffer++;
+          l = 0;
+        }
         for(d = 0; d < n_pr; d++)
-          new_m += buffers[d][l];
+          new_m += buffers[d][curr_buffer][l];
 
         grid[i][j].M = new_m;
         grid[i][j].center.x = 0;
@@ -134,6 +186,14 @@ void broadcast_mass(Grid **grid, int p_rank, int n_pr, long grid_sz){
         l++;
       }
     }
+
+    for(i = 0; i < n_pr; i++){
+      for(j=0; j < n_buffers; j++){
+        free(buffers[i][j]);
+      }
+      free(buffers[i]);
+    }
+    free(buffers);
 }
 
 void broadcast_overall_center(Grid **grid, int p_rank, int n_pr, double *x, double *y){

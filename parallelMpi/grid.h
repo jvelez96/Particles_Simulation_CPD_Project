@@ -7,6 +7,7 @@
 #include <time.h>
 #include <mpi.h>
 #define BILLION 1E9
+#define GRIDBUFFER 250
 #define min(a, b) (((a) < (b)) ? (a) : (b))
 #define max(a, b) (((a) > (b)) ? (a) : (b))
 

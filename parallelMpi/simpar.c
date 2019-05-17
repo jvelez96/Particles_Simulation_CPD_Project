@@ -45,28 +45,17 @@ int main (int argc, char* argv[]) {
   pr_part_no = get_par_number(part_no, par_block, p_rank,n_pr);
   par = (Particle*) malloc(sizeof(Particle) * pr_part_no);
   if(p_rank == 0){
+    clock_gettime(CLOCK_REALTIME, &requestStart);
     totalM = init_particles(seed,grid_sz,part_no,par, grid, par_block, n_pr);
-    //printf("PR:     0   %f\n\n\n", totalM);
   }else{
       while(1){
-          //par_buffer = (double *) malloc(sizeof(double) * PARBUFFER*5);
           MPI_Recv(par_buffer, PARBUFFER*5, MPI_DOUBLE, 0, PARTAG, MPI_COMM_WORLD, &status);
-          //printf("PRF: %d\n", p_rank);
-          /*for(i=0; i<PARBUFFER*5; i++){
-            par_buffer_aux[i] = par_buffer[i];
-          }*/
           aux_i = fill_par_buffer(par_buffer, par, aux_i, pr_part_no, grid, grid_sz);
-          //printf("PRFF: %d\n", p_rank);
-          //free(par_buffer);
           if(aux_i == pr_part_no)
             break;
       }
-      //printf("FINITO\n");
   }
   MPI_Barrier (MPI_COMM_WORLD);
-
-  if(!p_rank)
-    clock_gettime(CLOCK_REALTIME, &requestStart);
 
   broadcast_mass(grid, p_rank, n_pr, grid_sz); //center.x && center.y = 0 here
   MPI_Barrier (MPI_COMM_WORLD);
