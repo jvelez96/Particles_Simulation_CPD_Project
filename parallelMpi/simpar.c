@@ -65,6 +65,9 @@ int main (int argc, char* argv[]) {
   }
   MPI_Barrier (MPI_COMM_WORLD);
 
+  if(!p_rank)
+    clock_gettime(CLOCK_REALTIME, &requestStart);
+
   broadcast_mass(grid, p_rank, n_pr, grid_sz); //center.x && center.y = 0 here
   MPI_Barrier (MPI_COMM_WORLD);
 
@@ -76,8 +79,12 @@ int main (int argc, char* argv[]) {
     broadcast_mass_centers(grid, p_rank, n_pr, grid_sz); //Mnext = 0 here
     MPI_Barrier (MPI_COMM_WORLD);
 
-    for(j=0; j<pr_part_no; j++){
+    #pragma omp parallel
+    {
+      #pragma omp for private (j)
+      for(j=0; j<pr_part_no; j++){
         move_particle(grid_sz, &par[j], grid, j);
+      }
     }
     MPI_Barrier (MPI_COMM_WORLD);
 
@@ -99,6 +106,12 @@ int main (int argc, char* argv[]) {
   if(p_rank == 0){
     printf("%.2f %.2f\n", par[0].pos.x, par[0].pos.y);
     printf("%.2f %.2f\n", x, y);
+    clock_gettime(CLOCK_REALTIME, &requestEnd);
+    // Calculate time it took
+    double accum = ( requestEnd.tv_sec - requestStart.tv_sec )
+      + ( requestEnd.tv_nsec - requestStart.tv_nsec )
+      / BILLION;
+    printf( "It took: %lfs\n", accum);
   }
 
   free_all(par, grid, grid_sz, par_block); //Frees all memory
