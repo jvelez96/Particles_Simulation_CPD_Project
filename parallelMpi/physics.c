@@ -50,12 +50,14 @@ double init_particles(long seed, long ncside, long long n_part, Particle *par, G
   int j;
   int x, y;
   double totalM;
+  //double* par_buffer;
   double par_buffer[PARBUFFER*5];
   int pr_counter=1, buf_counter=0;
   int status;
 
   srandom(seed);
   totalM = 0;
+  //par_buffer = (double *) malloc(sizeof(double) * PARBUFFER*5);
 
   for(i = 0; i < n_part; i++){
     if(i<par_block[1]){
@@ -65,7 +67,7 @@ double init_particles(long seed, long ncside, long long n_part, Particle *par, G
       par[i].v.y = (RND0_1 / ncside / 10.0);
       par[i].m = (RND0_1 * ncside / (G * 1e6 * n_part));
       totalM += par[i].m;
-      printf("P: %lld   %f %f   %f %f   %f\n", i, par[i].pos.x, par[i].pos.y, par[i].v.x, par[i].v.y, par[i].m);
+      //printf("P: %lld   %f %f   %f %f   %f\n", i, par[i].pos.x, par[i].pos.y, par[i].v.x, par[i].v.y, par[i].m);
 
       //Insert in grid after creation
       x = floor(par[i].pos.x * ncside);
@@ -89,7 +91,7 @@ double init_particles(long seed, long ncside, long long n_part, Particle *par, G
       par_buffer[buf_counter+4] = (RND0_1 * ncside / (G * 1e6 * n_part));
 
       totalM += par_buffer[buf_counter+4];
-      printf("P: %lld   %f %f   %f %f   %f\n", i, par_buffer[buf_counter], par_buffer[buf_counter+1], par_buffer[buf_counter+2], par_buffer[buf_counter+3], par_buffer[buf_counter+4]);
+      //printf("P: %lld   %f %f   %f %f   %f\n", i, par_buffer[buf_counter], par_buffer[buf_counter+1], par_buffer[buf_counter+2], par_buffer[buf_counter+3], par_buffer[buf_counter+4]);
 
 
       buf_counter = buf_counter +5;
@@ -101,7 +103,6 @@ double init_particles(long seed, long ncside, long long n_part, Particle *par, G
           par_buffer[buf_counter]= -1;
           //send par_buffer
           MPI_Send(par_buffer, PARBUFFER*5, MPI_DOUBLE, pr_counter, PARTAG, MPI_COMM_WORLD);
-          printf("AQUI\n");
 
           //clear par_buffer
           for(j=0; j<buf_counter+1;j++){
@@ -109,6 +110,8 @@ double init_particles(long seed, long ncside, long long n_part, Particle *par, G
           }
 
           pr_counter++;
+          //free(par_buffer);
+          //par_buffer = (double *) malloc(sizeof(double) * PARBUFFER*5);
           buf_counter = 0;
         }
       }else if(i==n_part-1){ //if its the last particle send it
@@ -116,26 +119,25 @@ double init_particles(long seed, long ncside, long long n_part, Particle *par, G
           par_buffer[buf_counter]= -1;
         //send par_buffer
         MPI_Send(par_buffer, PARBUFFER*5, MPI_DOUBLE, pr_counter, PARTAG, MPI_COMM_WORLD);
-        printf("AQUI ULTIMO\n");
 
         //clear par_buffer
         for(j=0; j<buf_counter+1;j++){
           par_buffer[j] = 0.0;
         }
-        buf_counter =0;
+        //free(par_buffer);
       }
       //reached buffer max_length
       if(buf_counter>=PARBUFFER*5){
         //send par_buffer
         MPI_Send(par_buffer, PARBUFFER*5, MPI_DOUBLE, pr_counter, PARTAG, MPI_COMM_WORLD);
-        printf("AQUI BUFFER\n");
 
         //clear par_buffer
         for(j=0; j<buf_counter;j++){
           par_buffer[j] = 0.0;
         }
-        //cada maquina vai ter de adicionar a sua grid as particulas
-        buf_counter=0;
+        //free(par_buffer);
+        //par_buffer = (double *) malloc(sizeof(double) * PARBUFFER*5);
+        buf_counter = 0;
       }
     }
   }
@@ -149,7 +151,7 @@ long long fill_par_buffer(double *par_buffer, Particle *par, long long aux_i, lo
   long long count = 0;
 
   for(i=aux_i; i<pr_part_no; i++){
-    if((par_buffer[i*5] == -1) || count == PARBUFFER){
+    if((par_buffer[count*5] == -1) || count == PARBUFFER){
       break;
     }else{
       par[i].pos.x = par_buffer[count*5];
@@ -167,10 +169,9 @@ long long fill_par_buffer(double *par_buffer, Particle *par, long long aux_i, lo
           y = grid_sz - 1;
 
       grid[x][y].Mnext += par[i].m;
-      printf("P: %lld   %f %f   %f %f   %f\n", i, par[i].pos.x, par[i].pos.y, par[i].v.x, par[i].v.y, par[i].m);
-
+      count++;
+      //printf("P: %lld   %f %f   %f %f   %f\n", i, par[i].pos.x, par[i].pos.y, par[i].v.x, par[i].v.y, par[i].m);
     }
-    count++;
   }
   aux = i;
   return aux;

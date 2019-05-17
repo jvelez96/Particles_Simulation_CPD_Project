@@ -46,14 +46,22 @@ int main (int argc, char* argv[]) {
   par = (Particle*) malloc(sizeof(Particle) * pr_part_no);
   if(p_rank == 0){
     totalM = init_particles(seed,grid_sz,part_no,par, grid, par_block, n_pr);
+    //printf("PR:     0   %f\n\n\n", totalM);
   }else{
       while(1){
+          //par_buffer = (double *) malloc(sizeof(double) * PARBUFFER*5);
           MPI_Recv(par_buffer, PARBUFFER*5, MPI_DOUBLE, 0, PARTAG, MPI_COMM_WORLD, &status);
+          //printf("PRF: %d\n", p_rank);
+          /*for(i=0; i<PARBUFFER*5; i++){
+            par_buffer_aux[i] = par_buffer[i];
+          }*/
           aux_i = fill_par_buffer(par_buffer, par, aux_i, pr_part_no, grid, grid_sz);
-          if(aux_i == pr_part_no){
+          //printf("PRFF: %d\n", p_rank);
+          //free(par_buffer);
+          if(aux_i == pr_part_no)
             break;
-          }
       }
+      //printf("FINITO\n");
   }
   MPI_Barrier (MPI_COMM_WORLD);
 
@@ -94,7 +102,7 @@ int main (int argc, char* argv[]) {
   }
 
   free_all(par, grid, grid_sz, par_block); //Frees all memory
-
+  MPI_Barrier (MPI_COMM_WORLD);
 
   MPI_Finalize();
   return 0;

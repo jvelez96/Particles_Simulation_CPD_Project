@@ -3,7 +3,7 @@
 
 #define G 6.67408e-11
 #define EPSLON 0.0005
-#define PARBUFFER 5
+#define PARBUFFER 1000
 #define PARTAG 123
 
 void divide_par(int n_pr, long long part_no, int rem, int *par_block);
