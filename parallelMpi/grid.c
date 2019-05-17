@@ -126,11 +126,15 @@ void broadcast_mass_centers(Grid **grid, int p_rank, int n_pr, long grid_sz){
       }
     }
 
-    for(i = 0; i < n_pr; i++){
-      for(j=0; j < n_buffers; j++){
-        free(buffers[i][j]);
+    #pragma omp parallel
+    {
+      #pragma omp for private (i,j)
+      for(i = 0; i < n_pr; i++){
+        for(j=0; j < n_buffers; j++){
+          free(buffers[i][j]);
+        }
+        free(buffers[i]);
       }
-      free(buffers[i]);
     }
     free(buffers);
 }
@@ -187,11 +191,15 @@ void broadcast_mass(Grid **grid, int p_rank, int n_pr, long grid_sz){
       }
     }
 
-    for(i = 0; i < n_pr; i++){
-      for(j=0; j < n_buffers; j++){
-        free(buffers[i][j]);
+    #pragma omp parallel
+    {
+      #pragma omp for private (i,j)
+      for(i = 0; i < n_pr; i++){
+        for(j=0; j < n_buffers; j++){
+          free(buffers[i][j]);
+        }
+        free(buffers[i]);
       }
-      free(buffers[i]);
     }
     free(buffers);
 }
