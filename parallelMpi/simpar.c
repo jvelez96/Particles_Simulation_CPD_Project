@@ -11,7 +11,7 @@ int main (int argc, char* argv[]) {
   long long aux_i=0;
   double totalM;
   MPI_Status status;
-  struct timespec requestStart, requestEnd, moveStart, moveEnd;
+  //struct timespec requestStart, requestEnd, moveStart, moveEnd;
   double par_buffer[PARBUFFER*5];
 
   MPI_Init (&argc, &argv);
@@ -45,7 +45,7 @@ int main (int argc, char* argv[]) {
   pr_part_no = get_par_number(part_no, par_block, p_rank,n_pr);
   par = (Particle*) malloc(sizeof(Particle) * pr_part_no);
   if(p_rank == 0){
-    clock_gettime(CLOCK_REALTIME, &requestStart);
+    //clock_gettime(CLOCK_REALTIME, &requestStart);
     totalM = init_particles(seed,grid_sz,part_no,par, grid, par_block, n_pr);
   }else{
       while(1){
@@ -95,12 +95,12 @@ int main (int argc, char* argv[]) {
   if(p_rank == 0){
     printf("%.2f %.2f\n", par[0].pos.x, par[0].pos.y);
     printf("%.2f %.2f\n", x, y);
-    clock_gettime(CLOCK_REALTIME, &requestEnd);
+    //clock_gettime(CLOCK_REALTIME, &requestEnd);
     // Calculate time it took
-    double accum = ( requestEnd.tv_sec - requestStart.tv_sec )
+    /*double accum = ( requestEnd.tv_sec - requestStart.tv_sec )
       + ( requestEnd.tv_nsec - requestStart.tv_nsec )
       / BILLION;
-    printf( "It took: %lfs\n", accum);
+    printf( "It took: %lfs\n", accum);*/
   }
 
   free_all(par, grid, grid_sz, par_block); //Frees all memory
