@@ -38,4 +38,4 @@ void broadcast_mass_centers(Grid **grid, int p_rank, int n_pr, long grid_sz);
 void broadcast_mass(Grid **grid, int p_rank, int n_pr, long grid_sz);
 void broadcast_overall_center(Grid **grid, int p_rank, int n_pr, double *x, double *y);
 void broadcast_totalM(int p_rank, int n_pr, double *totalM);
-void free_all(Particle *par, Grid  **grid, long grid_sz, int *par_block, double *par_buffer);
+void free_all(Particle *par, Grid  **grid, long grid_sz, int *par_block);

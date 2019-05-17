@@ -12,7 +12,7 @@ int main (int argc, char* argv[]) {
   double totalM;
   MPI_Status status;
   struct timespec requestStart, requestEnd, moveStart, moveEnd;
-  double *par_buffer = NULL;
+  double par_buffer[PARBUFFER*5];
 
   MPI_Init (&argc, &argv);
 
@@ -47,15 +47,14 @@ int main (int argc, char* argv[]) {
   if(p_rank == 0){
     totalM = init_particles(seed,grid_sz,part_no,par, grid, par_block, n_pr);
   }else{
-      par_buffer = (double*) malloc(sizeof(double)*PARBUFFER*5);
       while(1){
           MPI_Recv(par_buffer, PARBUFFER*5, MPI_DOUBLE, 0, PARTAG, MPI_COMM_WORLD, &status);
           aux_i = fill_par_buffer(par_buffer, par, aux_i, pr_part_no, grid, grid_sz);
-          if(aux_i == pr_part_no)
-              break;
+          if(aux_i == pr_part_no){
+            break;
+          }
       }
   }
-
   MPI_Barrier (MPI_COMM_WORLD);
 
   broadcast_mass(grid, p_rank, n_pr, grid_sz); //center.x && center.y = 0 here
@@ -94,7 +93,7 @@ int main (int argc, char* argv[]) {
     printf("%.2f %.2f\n", x, y);
   }
 
-  free_all(par, grid, grid_sz, par_block, par_buffer); //Frees all memory
+  free_all(par, grid, grid_sz, par_block); //Frees all memory
 
 
   MPI_Finalize();
