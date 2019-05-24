@@ -1,5 +1,0 @@
-To Dos:
-- Inicializar as particulas com a função do stor na nossa estrutura
-- Determinar o centro de massa de cada célula
-- Determinar a força aplicada a cada particula
-- Calcular nova posição e nova velocidade de cada particula
